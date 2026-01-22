@@ -1,0 +1,1360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transfer Certificate Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --header-gradient: linear-gradient(135deg, #2c3e50, #3498db);
+        --btn-gradient: linear-gradient(135deg, #3498db, #2980b9);
+        --success-bg: #d4edda;
+        --success-color: #155724;
+        --error-bg: #f8d7da;
+        --error-color: #721c24;
+        --info-bg: #d1ecf1;
+        --info-color: #0c5460;
+        --border-color: #e1e8ed;
+        --text-color: #2c3e50;
+        --box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--primary-gradient);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
+      }
+
+      .header {
+        background: var(--header-gradient);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        font-weight: 300;
+      }
+
+      .header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .form-section {
+        padding: 40px;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      }
+
+      .file-upload {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+      }
+
+      .file-upload input[type="file"] {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+
+      .file-upload-label {
+        display: block;
+        padding: 15px;
+        border: 2px dashed #3498db;
+        border-radius: 8px;
+        text-align: center;
+        background: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .file-upload-label:hover {
+        background: #e3f2fd;
+        border-color: #2980b9;
+      }
+
+      .btn {
+        background: var(--btn-gradient);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 10px 0;
+      }
+
+      .btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+      }
+
+      .btn:disabled {
+        background: #95a5a6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .preview-section {
+        background: #f8f9fa;
+        padding: 30px;
+        margin-top: 20px;
+        border-radius: 10px;
+        display: none;
+      }
+
+      .data-preview {
+        margin-top: 20px;
+        overflow: auto;
+        max-height: 500px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        min-width: 100%;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 8px 12px;
+        text-align: left;
+        border: 1px solid #ddd;
+        font-size: 14px;
+        white-space: nowrap;
+        min-width: 100px;
+      }
+
+      .data-table th {
+        background: #34495e;
+        color: white;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .data-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .data-table tr:hover {
+        background: #e3f2fd;
+      }
+
+      .status {
+        padding: 10px 15px;
+        border-radius: 6px;
+        margin: 10px 0;
+        font-weight: 500;
+      }
+
+      .status.success {
+        background: var(--success-bg);
+        color: var(--success-color);
+        border: 1px solid #c3e6cb;
+      }
+
+      .status.error {
+        background: var(--error-bg);
+        color: var(--error-color);
+        border: 1px solid #f5c6cb;
+      }
+
+      .status.info {
+        background: var(--info-bg);
+        color: var(--info-color);
+        border: 1px solid #bee5eb;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: var(--border-color);
+        border-radius: 3px;
+        overflow: hidden;
+        margin: 10px 0;
+        display: none;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: var(--btn-gradient);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .record-count {
+        margin-top: 10px;
+        padding: 10px;
+        background: #e8f4fd;
+        border-radius: 5px;
+        font-weight: 500;
+        color: var(--text-color);
+      }
+
+      /* TC Certificate Styles */
+      .tc-container {
+        display: none;
+        position: relative;
+        width: 100%;
+        background: white;
+        z-index: 1000;
+        margin-top: 20px;
+        border-radius: 10px;
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
+      }
+
+      @page {
+        size: A4 landscape;
+        margin: 5mm 2mm 5mm 5mm;
+      }
+
+      .tc-page {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto 20px auto;
+        background: white;
+        display: flex;
+        gap: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        page-break-after: always;
+        position: relative;
+      }
+
+      .tc-page::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 20px;
+        bottom: 20px;
+        width: 1px;
+        border-left: 2px dotted #666;
+        z-index: 1;
+      }
+
+      .tc-page:last-child {
+        page-break-after: auto;
+      }
+
+      .certificate {
+        flex: 1;
+        padding: 20px;
+        background: white;
+        font-family: "Times New Roman", serif;
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      .certificate-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        font-size: 12px;
+      }
+
+      .certificate-table td {
+        vertical-align: top;
+        padding: 2px 4px;
+        border: none;
+        font-size: 12px;
+        line-height: 1.1;
+      }
+
+      .serial-col {
+        width: 1%;
+        font-weight: normal;
+        padding: 1px 1px;
+        min-width: 15px;
+        max-width: 20px;
+      }
+      .label-col {
+        width: 50%;
+      }
+      .data-col {
+        width: 49%;
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      .certificate:first-child {
+        padding-right: 15px;
+      }
+
+      .content-wrapper {
+        padding-right: 15px;
+        margin-right: 15px;
+      }
+
+      .certificate:last-child .content-wrapper {
+        padding-right: 0;
+        margin-right: 0;
+      }
+
+      .certificate-title {
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .header-info {
+        margin-bottom: 10px;
+        font-size: 13px;
+      }
+
+      .controls {
+        position: sticky;
+        top: 20px;
+        right: 20px;
+        z-index: 1001;
+        background: var(--header-gradient);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .controls h4 {
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .controls button {
+        margin: 5px;
+        background: white;
+        color: var(--text-color);
+        border: 2px solid white;
+        font-weight: 600;
+      }
+
+      .controls button:hover {
+        background: #f8f9fa;
+        transform: translateY(-1px);
+      }
+
+      .exam-section {
+        position: relative;
+        height: 140px;
+        width: 100%;
+      }
+
+      .exam-line {
+        position: absolute;
+        background: #000;
+      }
+
+      .exam-line.top {
+        top: 10px;
+        left: 5px;
+        width: 60px;
+        height: 2px;
+        border-top: 2px solid #000;
+      }
+      .exam-line.vertical {
+        top: 10px;
+        left: 35px;
+        width: 2px;
+        height: 125px;
+        border-left: 2px solid #000;
+      }
+      .exam-line.bottom {
+        top: 133px;
+        left: 5px;
+        width: 60px;
+        height: 2px;
+        border-top: 2px solid #000;
+      }
+
+      @media print {
+        .controls {
+          display: none;
+        }
+        body {
+          background: white;
+        }
+        .tc-container {
+          position: static;
+          display: block;
+          padding: 0;
+          overflow: visible;
+          margin: 0;
+          border-radius: 0;
+          box-shadow: none;
+        }
+        .tc-page {
+          width: 297mm;
+          height: 210mm;
+          padding: 5mm 2mm 5mm 5mm;
+          margin: 0 auto;
+          border: none;
+          box-shadow: none;
+          gap: 10px;
+          max-width: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Transfer Certificate Generator</h1>
+        <p>Generate professional transfer certificates from CSV/Excel data</p>
+      </div>
+
+      <div class="form-section">
+        <div class="form-group">
+          <label for="collegeName">College Name:</label>
+          <input
+            type="text"
+            id="collegeName"
+            class="form-input"
+            value="GOVT. ARTS AND SCIENCE COLLEGE UDUMA"
+            placeholder="Enter college name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="csvFile">Upload CSV/Excel File:</label>
+          <div class="file-upload">
+            <input type="file" id="csvFile" accept=".csv,.xlsx,.xls" />
+            <label for="csvFile" class="file-upload-label">
+              <strong>Choose file</strong> or drag and drop<br />
+              <small>Supports CSV, Excel (.xlsx, .xls)</small>
+            </label>
+          </div>
+        </div>
+
+        <button class="btn" id="previewBtn" disabled>Preview Data</button>
+        <button class="btn" id="generateBtn" disabled>Generate All TCs</button>
+        <button class="btn" id="downloadExcelBtn" disabled>
+          Download TC Summary Excel
+        </button>
+
+        <div id="status"></div>
+        <div class="progress-bar" id="progressBar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="preview-section" id="previewSection">
+          <h3>Data Preview</h3>
+          <div class="record-count" id="recordCount"></div>
+          <div class="data-preview" id="dataPreview"></div>
+        </div>
+      </div>
+
+      <div class="tc-container" id="tcContainer"></div>
+    </div>
+
+    <script>
+      class TCGenerator {
+        constructor() {
+          this.studentsData = [];
+          this.collegeName = "";
+          this.startingTCNumber = "";
+          this.initializeEventListeners();
+          this.showStatus("Upload a CSV or Excel file to get started.", "info");
+        }
+
+        initializeEventListeners() {
+          document
+            .getElementById("csvFile")
+            .addEventListener("change", (e) => this.handleFileUpload(e));
+          document
+            .getElementById("previewBtn")
+            .addEventListener("click", () => this.previewData());
+          document
+            .getElementById("generateBtn")
+            .addEventListener("click", () => this.generateAllTCs());
+          document
+            .getElementById("downloadExcelBtn")
+            .addEventListener("click", () => this.downloadTCSummaryExcel());
+        }
+
+        // Utility Functions
+        numberToWords(num) {
+          const ones = [
+            "",
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+            "ten",
+            "eleven",
+            "twelve",
+            "thirteen",
+            "fourteen",
+            "fifteen",
+            "sixteen",
+            "seventeen",
+            "eighteen",
+            "nineteen",
+          ];
+          const tens = [
+            "",
+            "",
+            "twenty",
+            "thirty",
+            "forty",
+            "fifty",
+            "sixty",
+            "seventy",
+            "eighty",
+            "ninety",
+          ];
+          const scales = ["", "thousand", "million", "billion"];
+
+          if (num === 0) return "zero";
+
+          function convertHundreds(n) {
+            let result = "";
+            if (n >= 100) {
+              result += ones[Math.floor(n / 100)] + " hundred ";
+              n %= 100;
+            }
+            if (n >= 20) {
+              result += tens[Math.floor(n / 10)] + " ";
+              n %= 10;
+            }
+            if (n > 0) {
+              result += ones[n] + " ";
+            }
+            return result.trim();
+          }
+
+          let result = "";
+          let scaleIndex = 0;
+          while (num > 0) {
+            if (num % 1000 !== 0) {
+              result =
+                convertHundreds(num % 1000) +
+                (scales[scaleIndex] ? " " + scales[scaleIndex] : "") +
+                " " +
+                result;
+            }
+            num = Math.floor(num / 1000);
+            scaleIndex++;
+          }
+          return result.trim();
+        }
+
+        dateToWords(dateStr) {
+          if (!dateStr) return "";
+
+          const standardized = this.standardizeDateFormat(dateStr);
+          const parts = standardized.split("/");
+
+          if (parts.length !== 3) return dateStr;
+
+          const [day, month, year] = parts;
+          const months = [
+            "",
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ];
+
+          const dayWords = this.numberToWords(parseInt(day));
+          const monthName = months[parseInt(month)] || month;
+          const yearWords = this.numberToWords(parseInt(year));
+
+          const capitalizedDay = dayWords
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+          const capitalizedYear = yearWords
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+
+          return `${capitalizedDay} ${monthName} ${capitalizedYear}`;
+        }
+
+        standardizeDateFormat(dateStr) {
+          if (!dateStr) return "";
+
+          let dateString = dateStr.toString().trim();
+          let day, month, year;
+
+          if (dateString.includes("-")) {
+            const parts = dateString.split("-");
+            if (parts.length === 3) {
+              if (parts[0].length === 4) {
+                [year, month, day] = parts;
+              } else {
+                [day, month, year] = parts;
+              }
+            }
+          } else if (dateString.includes("/")) {
+            const parts = dateString.split("/");
+            if (parts.length === 3) {
+              [day, month, year] = parts;
+            }
+          } else {
+            return dateString;
+          }
+
+          if (day && month && year) {
+            day = day.toString().padStart(2, "0");
+            month = month.toString().padStart(2, "0");
+            return `${day}/${month}/${year}`;
+          }
+
+          return dateString;
+        }
+
+        getTodayDate() {
+          const today = new Date();
+          const day = String(today.getDate()).padStart(2, "0");
+          const month = String(today.getMonth() + 1).padStart(2, "0");
+          const year = today.getFullYear();
+          return `${day}/${month}/${year}`;
+        }
+
+        incrementTCNumber(tcNumber, index) {
+          if (!tcNumber) return "";
+          const parts = tcNumber.split("/");
+          if (parts.length === 2) {
+            const num = parseInt(parts[0]) + index;
+            return `${num}/${parts[1]}`;
+          }
+          return tcNumber;
+        }
+
+        // File Processing
+        handleFileUpload(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const fileName = file.name.toLowerCase();
+          if (fileName.endsWith(".csv")) {
+            this.handleCSV(file);
+          } else if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+            this.handleExcel(file);
+          } else {
+            this.showStatus("Please upload a CSV or Excel file.", "error");
+          }
+        }
+
+        handleCSV(file) {
+          Papa.parse(file, {
+            header: false,
+            dynamicTyping: true,
+            skipEmptyLines: false,
+            complete: (results) => {
+              // Extract starting TC number from B1 (row 0, column 1)
+              const startingTC =
+                results.data[0] && results.data[0][1]
+                  ? results.data[0][1].toString().trim()
+                  : "";
+
+              if (!startingTC) {
+                this.showStatus(
+                  "Starting TC Number not found in cell B1. Please add it to the CSV file.",
+                  "error",
+                );
+                this.setButtonState("previewBtn", true);
+                return;
+              }
+
+              this.startingTCNumber = startingTC;
+
+              // Extract headers from row 2 (index 1)
+              const headers = results.data[1];
+
+              if (!headers || headers.length === 0) {
+                this.showStatus(
+                  "No headers found in row 2 of CSV file.",
+                  "error",
+                );
+                this.setButtonState("previewBtn", true);
+                return;
+              }
+
+              // Extract data from row 3 onwards (index 2+)
+              const dataRows = results.data.slice(2);
+
+              // Convert to object array
+              const jsonData = dataRows.map((row) => {
+                const obj = {};
+                headers.forEach((header, index) => {
+                  if (header) {
+                    obj[header] = row[index] || "";
+                  }
+                });
+                return obj;
+              });
+
+              this.processData(jsonData, results.errors);
+            },
+            error: (error) =>
+              this.showStatus("Error parsing CSV: " + error.message, "error"),
+          });
+        }
+
+        handleExcel(file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            try {
+              const data = new Uint8Array(e.target.result);
+              const workbook = XLSX.read(data, { type: "array" });
+              const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+              const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+                header: 1,
+              });
+
+              // Extract starting TC number from B1 (row 0, column 1)
+              const startingTC =
+                jsonData[0] && jsonData[0][1]
+                  ? jsonData[0][1].toString().trim()
+                  : "";
+
+              if (!startingTC) {
+                this.showStatus(
+                  "Starting TC Number not found in cell B1. Please add it to the Excel file.",
+                  "error",
+                );
+                this.setButtonState("previewBtn", true);
+                return;
+              }
+
+              this.startingTCNumber = startingTC;
+
+              // Extract headers from row 2 (index 1)
+              const headers = jsonData[1];
+
+              if (!headers || headers.length === 0) {
+                this.showStatus(
+                  "No headers found in row 2 of Excel file.",
+                  "error",
+                );
+                this.setButtonState("previewBtn", true);
+                return;
+              }
+
+              // Extract data from row 3 onwards (index 2+)
+              const dataRows = jsonData.slice(2);
+
+              // Convert to object array with headers
+              const rows = dataRows.map((row) => {
+                const obj = {};
+                headers.forEach((header, index) => {
+                  if (header) {
+                    obj[header] = row[index] || "";
+                  }
+                });
+                return obj;
+              });
+
+              this.processData(rows, []);
+            } catch (error) {
+              this.showStatus(
+                "Error parsing Excel file: " + error.message,
+                "error",
+              );
+            }
+          };
+          reader.readAsArrayBuffer(file);
+        }
+
+        processData(data, errors) {
+          if (errors && errors.length > 0) {
+            console.warn("Data parsing warnings:", errors);
+          }
+
+          const filteredData = data.filter((row) => {
+            const hasName = row["Name"] && row["Name"].toString().trim() !== "";
+            const hasAdmNo =
+              row["Adm No"] && row["Adm No"].toString().trim() !== "";
+            const hasAnyData = Object.values(row).some(
+              (value) =>
+                value !== null &&
+                value !== undefined &&
+                value.toString().trim() !== "",
+            );
+            return hasName || hasAdmNo || hasAnyData;
+          });
+
+          this.studentsData = filteredData;
+
+          if (this.studentsData.length === 0) {
+            this.showStatus("No valid student data found in file.", "error");
+            this.setButtonState("previewBtn", true);
+            return;
+          }
+
+          this.setButtonState("previewBtn", false);
+          this.showStatus(
+            `Successfully loaded ${this.studentsData.length} valid records. Starting TC Number: ${this.startingTCNumber}`,
+            "success",
+          );
+        }
+
+        // Data Preview
+        previewData() {
+          if (this.studentsData.length === 0) {
+            this.showStatus("No data to preview.", "error");
+            return;
+          }
+
+          this.collegeName = document
+            .getElementById("collegeName")
+            .value.trim();
+
+          if (!this.collegeName) {
+            this.showStatus("Please fill in college name.", "error");
+            return;
+          }
+
+          if (!this.startingTCNumber) {
+            this.showStatus(
+              "Starting TC Number not found in CSV. Please add it to cell B1.",
+              "error",
+            );
+            return;
+          }
+
+          try {
+            this.displayPreview();
+            this.setButtonState("generateBtn", false);
+            this.setButtonState("downloadExcelBtn", false);
+            this.showStatus("Data preview generated successfully!", "success");
+          } catch (error) {
+            this.showStatus(
+              "Error generating preview: " + error.message,
+              "error",
+            );
+          }
+        }
+
+        displayPreview() {
+          const previewSection = document.getElementById("previewSection");
+          const dataPreview = document.getElementById("dataPreview");
+          const recordCount = document.getElementById("recordCount");
+
+          if (this.studentsData.length === 0) {
+            dataPreview.innerHTML = "<p>No data available</p>";
+            recordCount.innerHTML = "No records found";
+            previewSection.style.display = "block";
+            return;
+          }
+
+          const firstRow = this.studentsData[0];
+          const columnNames = Object.keys(firstRow);
+
+          recordCount.innerHTML = `Found ${this.studentsData.length} records with ${columnNames.length} columns`;
+
+          let html = '<table class="data-table">';
+
+          // Header
+          html += "<thead><tr><th>S.No</th><th>TC No</th>";
+          columnNames.forEach((col) => (html += `<th>${col}</th>`));
+          html += "</tr></thead><tbody>";
+
+          // Data rows
+          this.studentsData.forEach((student, index) => {
+            const tcNo = this.incrementTCNumber(this.startingTCNumber, index);
+            html += `<tr><td>${index + 1}</td><td>${tcNo}</td>`;
+            columnNames.forEach((col) => {
+              const value = student[col];
+              const displayValue =
+                value !== null && value !== undefined && value !== ""
+                  ? value
+                  : "N/A";
+              html += `<td>${displayValue}</td>`;
+            });
+            html += "</tr>";
+          });
+
+          html += "</tbody></table>";
+          dataPreview.innerHTML = html;
+          previewSection.style.display = "block";
+        }
+
+        // TC Generation
+        generateAllTCs() {
+          if (this.studentsData.length === 0) {
+            this.showStatus("No data available for generation.", "error");
+            return;
+          }
+
+          const tcContainer = document.getElementById("tcContainer");
+          const progressBar = document.getElementById("progressBar");
+          const progressFill = document.getElementById("progressFill");
+
+          progressBar.style.display = "block";
+          tcContainer.innerHTML = "";
+
+          let html = "";
+
+          for (let index = 0; index < this.studentsData.length; index++) {
+            const student = this.studentsData[index];
+            const tcNo = this.incrementTCNumber(this.startingTCNumber, index);
+            const dobWords = this.dateToWords(student["Date of Birth"] || "");
+            // Get issue date from CSV
+            const issueDateRaw = student["Issue Date"] || this.getTodayDate();
+            const issueDate = this.standardizeDateFormat(issueDateRaw);
+            const progress = ((index + 1) / this.studentsData.length) * 100;
+            progressFill.style.width = progress + "%";
+
+            html += this.generateTCPage(student, tcNo, dobWords, issueDate);
+          }
+
+          tcContainer.innerHTML = html;
+          progressBar.style.display = "none";
+          this.showTCContainer();
+          this.showStatus(
+            `Generated ${this.studentsData.length} Transfer Certificates successfully!`,
+            "success",
+          );
+        }
+
+        generateTCPage(student, tcNo, dobWords, issueDate) {
+          const standardizedDob = this.standardizeDateFormat(
+            student["Date of Birth"] || "",
+          );
+          const tcHTML = `
+                    <div class="certificate">
+                        <div class="content-wrapper">
+                            <h1 class="certificate-title">Transfer Certificate</h1>
+                            
+                            <div style="text-align: center; margin-bottom: 15px; font-weight: bold; font-size: 14px;">
+                                ${this.collegeName}
+                            </div>
+                            
+                            <div class="header-info">
+                                <div>Number: <span style="font-weight: bold;">${tcNo}</span> <span style="float: right;">Date: <span style="font-weight: bold;">${issueDate}</span></span></div>
+                            </div>
+                            
+                            <table class="certificate-table">
+                                ${this.generateTableRows(student, standardizedDob, dobWords, issueDate)}
+                            </table>
+                        </div>
+                    </div>`;
+
+          return `<div class="tc-page">${tcHTML}${tcHTML}</div>`;
+        }
+
+        createTCHTML(student, tcNo, dobWords, todayDate, standardizedDob) {
+          return `
+                    <div class="certificate">
+                        <div class="content-wrapper">
+                            <h1 class="certificate-title">Transfer Certificate</h1>
+                            
+                            <div class="header-info">
+                                <div style="text-align: center; margin-bottom: 15px;">${this.collegeName}</div>
+                                <div>Number: ${tcNo}<span style="float: right;">Date: ${todayDate}</span></div>
+                            </div>
+                            
+                            <table class="certificate-table">
+                                ${this.generateTableRows(student, standardizedDob, dobWords, todayDate)}
+                            </table>
+                        </div>
+                    </div>`;
+        }
+
+        generateTableRows(student, standardizedDob, dobWords, issueDate) {
+          const rows = [
+            {
+              num: 1,
+              label: "Name of student :",
+              value: student["Name"] || "",
+              colspan: true,
+            },
+            {
+              num: 2,
+              label: "Date of birth as entered in<br>Admission Register :",
+              value: `<span style="font-weight: bold;">${standardizedDob}</span> <span style="font-weight: normal;">(${dobWords})</span>`,
+              colspan: true,
+            },
+            {
+              num: 3,
+              label: "Number in Admission Register :",
+              value: student["Adm No"] || "",
+              colspan: true,
+            },
+            {
+              num: 4,
+              label1: "Admitted on :",
+              value1: student["Admitted on"] || "",
+              label2: "into class :",
+              value2: student["into class"] || "",
+            },
+            {
+              num: 5,
+              label1: "Left on :",
+              value1: student["Left on"] || "",
+              label2: "from class :",
+              value2: student["from class"] || "",
+              spacing: true,
+            },
+            {
+              num: 6,
+              label: "Subjects or portions studied :",
+              value: student["Subject"] || "",
+              colspan: true,
+              spacing: true,
+            },
+            {
+              num: 7,
+              label: "Whether qualified for promotion to a<br>higher class :",
+              value: student["Course Status"] || student["Course status"] || "",
+              colspan: true,
+              spacing: true,
+            },
+            {
+              num: 8,
+              label:
+                "Whether all dues to the college have been<br>discharged :",
+              value: "YES",
+              colspan: true,
+            },
+            {
+              num: 9,
+              label:
+                "Whether the student was in receipt of any<br>scholarship or concession :<br>(Nature to be specified)",
+              value: student["Cetegory"] || "",
+              colspan: true,
+            },
+            {
+              num: 10,
+              label: this.getExaminationLabel(),
+              value: this.getExaminationValue(),
+              colspan: true,
+            },
+            {
+              num: 11,
+              label:
+                "The date on which the student actually left<br>the college :",
+              value: student["Left on"] || "",
+              colspan: true,
+            },
+            {
+              num: 12,
+              label: "Date of application for Transfer Certificate :",
+              value: student["Application Date"] || "",
+              colspan: true,
+            },
+            {
+              num: 13,
+              label: "Date of issue of the Transfer Certificate :",
+              value: issueDate,
+              colspan: true,
+              spacing: true,
+            },
+            {
+              num: 14,
+              label: "Character and Conduct :",
+              value: "",
+              colspan: true,
+              spacing: true,
+            },
+            {
+              num: 15,
+              label: "Signature of the Principal :",
+              value: "",
+              colspan: true,
+              spacing: true,
+            },
+            {
+              num: 16,
+              label: "College Seal :",
+              value: "",
+              colspan: true,
+              spacing: true,
+            },
+          ];
+
+          return rows
+            .map((row) => {
+              const lineSpacing = row.spacing
+                ? "line-height: 1.5; padding: 3px 4px;"
+                : "";
+              if (row.colspan) {
+                return `<tr>
+                            <td class="serial-col" style="${lineSpacing}">${row.num}.</td>
+                            <td class="label-col" colspan="2" style="${lineSpacing}">${row.label}</td>
+                            <td class="data-col" colspan="2" style="${lineSpacing}">${row.value}</td>
+                        </tr>`;
+              } else {
+                return `<tr>
+                            <td class="serial-col" style="${lineSpacing}">${row.num}.</td>
+                            <td class="label-col" style="width: 25%; ${lineSpacing}">${row.label1}</td>
+                            <td class="data-col" style="width: 18%; font-weight: bold; ${lineSpacing}">${row.value1}</td>
+                            <td class="label-col" style="width: 18%; ${lineSpacing}">${row.label2}</td>
+                            <td class="data-col" style="width: 18%; font-weight: bold; ${lineSpacing}">${row.value2}</td>
+                        </tr>`;
+              }
+            })
+            .join("");
+        }
+
+        getExaminationLabel() {
+          return `Name of the examination of the—<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;(a) University for which the student has<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;been last presented from the college<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and Reg. No. of the student :<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;(b) Date of examination :<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;(c) Whether the student has appeared for<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the examination, if so,—<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(i) The parts (or division) in which<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;he has passed :<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ii) The parts (or division) in which<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;he has failed :`;
+        }
+
+        getExaminationValue() {
+          return `<div class="exam-section">
+                    <div class="exam-line top"></div>
+                    <div class="exam-line vertical"></div>
+                    <div class="exam-line bottom"></div>
+                </div>`;
+        }
+
+        // UI Controls
+        showTCContainer() {
+          const tcContainer = document.getElementById("tcContainer");
+          tcContainer.style.display = "block";
+
+          const controls = this.createControls();
+          tcContainer.insertBefore(controls, tcContainer.firstChild);
+        }
+
+        downloadTCSummaryExcel() {
+          if (this.studentsData.length === 0) {
+            this.showStatus("No data available for Excel generation.", "error");
+            return;
+          }
+
+          try {
+            // Create workbook and worksheet
+            const wb = XLSX.utils.book_new();
+
+            // Prepare data for Excel
+            const excelData = this.studentsData.map((student, index) => {
+              const tcNo = this.incrementTCNumber(this.startingTCNumber, index);
+              // Get issue date from CSV
+              const issueDateRaw = student["Issue Date"] || this.getTodayDate();
+              const issueDate = this.standardizeDateFormat(issueDateRaw);
+              return {
+                "S.No": index + 1,
+                "Admission No": student["Adm No"] || "N/A",
+                Name: student["Name"] || "N/A",
+                "TC Number": tcNo,
+                "Date of Issue": issueDate,
+              };
+            });
+
+            // Create worksheet from data
+            const ws = XLSX.utils.json_to_sheet(excelData);
+
+            // Set column widths for better formatting
+            ws["!cols"] = [
+              { wch: 8 }, // S.No
+              { wch: 15 }, // Admission No
+              { wch: 25 }, // Name
+              { wch: 15 }, // TC Number
+              { wch: 12 }, // Date of Issue
+            ];
+
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, "TC Summary");
+
+            // Generate filename with timestamp
+            const timestamp = new Date().toISOString().slice(0, 10);
+            const filename = `TC_Summary_${timestamp}.xlsx`;
+
+            // Save file
+            XLSX.writeFile(wb, filename);
+
+            this.showStatus(
+              `Excel file "${filename}" downloaded successfully!`,
+              "success",
+            );
+          } catch (error) {
+            console.error("Excel generation error:", error);
+            this.showStatus(
+              "Error generating Excel file: " + error.message,
+              "error",
+            );
+          }
+        }
+
+        createControls() {
+          const controls = document.createElement("div");
+          controls.className = "controls";
+          controls.innerHTML = `
+                    <h4>Transfer Certificates Generated</h4>
+                    <button class="btn" onclick="tcGenerator.downloadPDF()">📥 Download PDF</button>
+                    <button class="btn" onclick="tcGenerator.closeTCs()">❌ Close Preview</button>
+                    <p style="margin-top: 10px; font-size: 14px; opacity: 0.9;">Scroll down to view all certificates</p>
+                `;
+          return controls;
+        }
+
+        async downloadPDF() {
+          try {
+            this.showStatus("Generating PDF... Please wait.", "info");
+
+            const controls = document.querySelector(".controls");
+            if (controls) controls.style.display = "none";
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+              orientation: "landscape",
+              unit: "mm",
+              format: "a4",
+            });
+
+            const pages = document.querySelectorAll(".tc-page");
+
+            for (let i = 0; i < pages.length; i++) {
+              if (i > 0) pdf.addPage();
+
+              const progress = ((i + 1) / pages.length) * 100;
+              this.showStatus(
+                `Generating PDF... ${Math.round(progress)}%`,
+                "info",
+              );
+
+              try {
+                const canvas = await html2canvas(pages[i], {
+                  scale: 2,
+                  useCORS: true,
+                  allowTaint: true,
+                  backgroundColor: "#ffffff",
+                  width: pages[i].scrollWidth,
+                  height: pages[i].scrollHeight,
+                });
+
+                const imgData = canvas.toDataURL("image/png");
+                const imgWidth = 297;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+              } catch (pageError) {
+                console.error(`Error processing page ${i + 1}:`, pageError);
+              }
+            }
+
+            const timestamp = new Date()
+              .toISOString()
+              .slice(0, 19)
+              .replace(/[:]/g, "-");
+            const filename = `Transfer_Certificates_${timestamp}.pdf`;
+
+            pdf.save(filename);
+            this.showStatus(
+              `PDF downloaded successfully as ${filename}!`,
+              "success",
+            );
+
+            if (controls) controls.style.display = "block";
+          } catch (error) {
+            console.error("PDF generation error:", error);
+            this.showStatus("Error generating PDF: " + error.message, "error");
+
+            const controls = document.querySelector(".controls");
+            if (controls) controls.style.display = "block";
+          }
+        }
+
+        closeTCs() {
+          document.getElementById("tcContainer").style.display = "none";
+        }
+
+        // Utility Methods
+        showStatus(message, type) {
+          const statusDiv = document.getElementById("status");
+          statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+          setTimeout(() => (statusDiv.innerHTML = ""), 5000);
+        }
+
+        setButtonState(buttonId, disabled) {
+          document.getElementById(buttonId).disabled = disabled;
+        }
+      }
+
+      // Initialize the application
+      const tcGenerator = new TCGenerator();
+    </script>
+  </body>
+</html>
