@@ -1002,15 +1002,15 @@
                     <div class="certificate">
                         <div class="content-wrapper">
                             <h1 class="certificate-title">Transfer Certificate</h1>
-                            
+
                             <div style="text-align: center; margin-bottom: 15px; font-weight: bold; font-size: 14px;">
                                 ${this.collegeName}
                             </div>
-                            
+
                             <div class="header-info">
                                 <div>Number: <span style="font-weight: bold;">${tcNo}</span> <span style="float: right;">Date: <span style="font-weight: bold;">${issueDate}</span></span></div>
                             </div>
-                            
+
                             <table class="certificate-table">
                                 ${this.generateTableRows(student, standardizedDob, dobWords, issueDate)}
                             </table>
@@ -1025,12 +1025,12 @@
                     <div class="certificate">
                         <div class="content-wrapper">
                             <h1 class="certificate-title">Transfer Certificate</h1>
-                            
+
                             <div class="header-info">
                                 <div style="text-align: center; margin-bottom: 15px;">${this.collegeName}</div>
                                 <div>Number: ${tcNo}<span style="float: right;">Date: ${todayDate}</span></div>
                             </div>
-                            
+
                             <table class="certificate-table">
                                 ${this.generateTableRows(student, standardizedDob, dobWords, todayDate)}
                             </table>
@@ -1270,7 +1270,7 @@
             // Create template data structure
             // Row 1: TC Number in cell B1, rest empty
             const row1 = [
-              "",
+              "TC No",
               "25/2025",
               "",
               "",
@@ -1286,34 +1286,34 @@
 
             // Row 2: Headers
             const headers = [
-              "Name",
               "Adm No",
+              "Name",
               "Date of Birth",
               "Admitted on",
               "into class",
               "Left on",
               "from class",
               "Subject",
-              "Course Status",
-              "Cetegory",
               "Application Date",
               "Issue Date",
+              "Cetegory",
+              "Course Status",
             ];
 
             // Row 3: Sample data
             const sampleData = [
-              "John Doe",
               "12345",
+              "John Doe",
               "01/01/2000",
               "01/06/2023",
-              "B.Sc Computer Science",
+              "I Sem",
               "31/05/2024",
-              "B.Sc Computer Science",
-              "Computer Science",
-              "Completed",
-              "General",
+              "VI Sem",
+              "BA English",
               "15/01/2025",
               "20/01/2025",
+              "OBC",
+              "Course Completed",
             ];
 
             // Combine all rows
