@@ -478,6 +478,10 @@
           />
         </div>
 
+        <button class="btn" id="downloadTemplateBtn">
+          📥 Download CSV Template
+        </button>
+
         <div class="form-group">
           <label for="csvFile">Upload CSV/Excel File:</label>
           <div class="file-upload">
@@ -524,6 +528,9 @@
           document
             .getElementById("csvFile")
             .addEventListener("change", (e) => this.handleFileUpload(e));
+          document
+            .getElementById("downloadTemplateBtn")
+            .addEventListener("click", () => this.downloadCSVTemplate());
           document
             .getElementById("previewBtn")
             .addEventListener("click", () => this.previewData());
@@ -1258,6 +1265,88 @@
           }
         }
 
+        downloadCSVTemplate() {
+          try {
+            // Create template data structure
+            // Row 1: TC Number in cell B1, rest empty
+            const row1 = [
+              "",
+              "25/2025",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+            ];
+
+            // Row 2: Headers
+            const headers = [
+              "Name",
+              "Adm No",
+              "Date of Birth",
+              "Admitted on",
+              "into class",
+              "Left on",
+              "from class",
+              "Subject",
+              "Course Status",
+              "Cetegory",
+              "Application Date",
+              "Issue Date",
+            ];
+
+            // Row 3: Sample data
+            const sampleData = [
+              "John Doe",
+              "12345",
+              "01/01/2000",
+              "01/06/2023",
+              "B.Sc Computer Science",
+              "31/05/2024",
+              "B.Sc Computer Science",
+              "Computer Science",
+              "Completed",
+              "General",
+              "15/01/2025",
+              "20/01/2025",
+            ];
+
+            // Combine all rows
+            const csvContent = [row1, headers, sampleData];
+
+            // Convert to CSV string
+            const csvString = csvContent.map((row) => row.join(",")).join("\n");
+
+            // Create blob and download
+            const blob = new Blob([csvString], {
+              type: "text/csv;charset=utf-8;",
+            });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+
+            link.setAttribute("href", url);
+            link.setAttribute("download", "TC_Template.csv");
+            link.style.visibility = "hidden";
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            this.showStatus("CSV template downloaded successfully!", "success");
+          } catch (error) {
+            console.error("Template download error:", error);
+            this.showStatus(
+              "Error downloading template: " + error.message,
+              "error",
+            );
+          }
+        }
+
         createControls() {
           const controls = document.createElement("div");
           controls.className = "controls";
@@ -1358,5 +1447,3 @@
     </script>
   </body>
 </html>
-
-
