@@ -977,7 +977,7 @@
             const tcNo = this.incrementTCNumber(this.startingTCNumber, index);
             const dobWords = this.dateToWords(student["Date of Birth"] || "");
             // Get issue date from CSV
-            const issueDateRaw = student["Issue Date"] || this.getTodayDate();
+            const issueDateRaw = student['issue date'] || student['Issue date'] || student['Issue Date'] || student['ISSUE DATE'] || this.getTodayDate();
             const issueDate = this.standardizeDateFormat(issueDateRaw);
             const progress = ((index + 1) / this.studentsData.length) * 100;
             progressFill.style.width = progress + "%";
@@ -1447,5 +1447,6 @@
     </script>
   </body>
 </html>
+
 
 
