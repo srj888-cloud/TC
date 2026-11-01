@@ -397,6 +397,36 @@
         cursor: pointer;
       }
 
+      /* dd-mm-yyyy text field; 📅 opens the browser's picker via a hidden native input */
+      .date-field {
+        position: relative;
+      }
+      .date-field input[type="text"] {
+        padding-right: 44px;
+      }
+      .date-pick {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.1rem;
+        padding: 4px;
+      }
+      .date-native {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+        border: 0;
+        padding: 0;
+      }
+
       .field-group {
         flex: 1;
         min-width: 180px;
@@ -874,9 +904,6 @@
         <div class="header-emblem">🏛️</div>
         <div class="header-text">
           <h1>Transfer Certificate Manager</h1>
-          <div class="subtitle">
-            Govt. Arts and Science College, Uduma · Kerala
-          </div>
         </div>
         <div class="header-badge">Client-Side · Offline</div>
       </div>
@@ -894,11 +921,17 @@
             required:
             <strong
               >Adm. No., Student Name, Sex, Category, Adm. Date, D.O.B., Course,
-              I, II, III, Admitted to, Left from, Left on, Course Status, TC
-              Number</strong
+              I, II, III, IV, Admitted to, Left from, Left on, Course
+              Status</strong
+            ><br /><small
+              >Optional (for Caution Deposit form): Mobile No, IFSC, Account No</small
             >
           </p>
           <span class="btn-upload">Choose File</span>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px">
+          <button class="btn btn-outline" onclick="downloadSample('csv')">📥 Sample CSV</button>
+          <button class="btn btn-outline" onclick="downloadSample('xlsx')">📥 Sample Excel</button>
         </div>
       </div>
 
@@ -919,11 +952,11 @@
         </div>
 
         <div class="tabs">
-          <button class="tab-btn active" id="tabBtnApp" onclick="selectTab('app')">
-            📄 TC Application
-          </button>
-          <button class="tab-btn" id="tabBtnIssue" onclick="selectTab('issue')">
+          <button class="tab-btn active" id="tabBtnIssue" onclick="selectTab('issue')">
             🎓 Issue TC (Batch) <span class="tab-count" id="tabBatchCount">0</span>
+          </button>
+          <button class="tab-btn" id="tabBtnApp" onclick="selectTab('app')">
+            📄 TC Application
           </button>
           <button class="tab-btn" id="tabBtnSettings" onclick="selectTab('settings')">
             ⚙️ Settings
@@ -931,7 +964,7 @@
         </div>
 
         <!-- ═════════════ TAB: TC APPLICATION ═════════════ -->
-        <div class="tab-content active" id="tabApp">
+        <div class="tab-content" id="tabApp">
           <div class="cards-grid">
             <div
               class="mode-card active"
@@ -1099,7 +1132,7 @@
         </div>
 
         <!-- ═════════════ TAB: ISSUE TC (BATCH) ═════════════ -->
-        <div class="tab-content" id="tabIssue">
+        <div class="tab-content active" id="tabIssue">
           <div class="panel active">
             <h2>🔍 Find Student</h2>
             <div class="form-row" style="margin-bottom: 0">
@@ -1129,11 +1162,19 @@
               <div class="form-row" style="margin-top: 16px; margin-bottom: 0">
                 <div class="field-group">
                   <label for="tcAppDate">TC Application Date *</label>
-                  <input type="date" id="tcAppDate" />
+                  <div class="date-field">
+                    <input type="text" id="tcAppDate" placeholder="dd-mm-yyyy" maxlength="10" oninput="maskDate(this)" />
+                    <button type="button" class="date-pick" title="Pick date" onclick="openPicker('tcAppDate')">📅</button>
+                    <input type="date" class="date-native" tabindex="-1" onchange="setDateInput('tcAppDate', this.value)" />
+                  </div>
                 </div>
                 <div class="field-group">
                   <label for="tcIssueDate">Date of Issue</label>
-                  <input type="date" id="tcIssueDate" />
+                  <div class="date-field">
+                    <input type="text" id="tcIssueDate" placeholder="dd-mm-yyyy" maxlength="10" oninput="maskDate(this)" />
+                    <button type="button" class="date-pick" title="Pick date" onclick="openPicker('tcIssueDate')">📅</button>
+                    <input type="date" class="date-native" tabindex="-1" onchange="setDateInput('tcIssueDate', this.value)" />
+                  </div>
                 </div>
                 <button class="btn btn-gold btn-lg" onclick="addToBatch()" style="flex-shrink: 0">
                   <span>➕</span> Add to Batch
@@ -1174,6 +1215,14 @@
           </div>
 
           <div class="tc-container" id="tcContainer"></div>
+
+          <div class="panel active">
+            <h2>📑 Issued TCs</h2>
+            <div class="hint" id="issuedInfo" style="margin-bottom: 14px"></div>
+            <button class="btn btn-primary" id="btnIssuedReport" onclick="downloadIssuedReport()">
+              <span>📊</span> Download Issued TC Report
+            </button>
+          </div>
         </div>
 
         <!-- ═════════════ TAB: SETTINGS ═════════════ -->
@@ -1194,7 +1243,11 @@
               </div>
               <div class="field-group">
                 <label for="setIssueDate">Default Date of Issue</label>
-                <input type="date" id="setIssueDate" />
+                <div class="date-field">
+                  <input type="text" id="setIssueDate" placeholder="dd-mm-yyyy" maxlength="10" oninput="maskDate(this)" />
+                  <button type="button" class="date-pick" title="Pick date" onclick="openPicker('setIssueDate')">📅</button>
+                  <input type="date" class="date-native" tabindex="-1" onchange="setDateInput('setIssueDate', this.value)" />
+                </div>
                 <div class="hint">Pre-filled when adding a student to the batch.</div>
               </div>
             </div>
@@ -1214,8 +1267,12 @@
     </main>
 
     <footer>
+      <div style="color: var(--grey-700); margin-bottom: 4px">
+        Developed by <strong>Sreejith M</strong>, Head Accountant, Govt. Arts and
+        Science College, Uduma
+      </div>
       All processing is done entirely in your browser. No data is sent to any
-      server. &nbsp;·&nbsp; Govt. Arts and Science College, Uduma
+      server.
     </footer>
 
     <script>
@@ -1328,13 +1385,16 @@
       function onDataLoaded(data, fields, fileName) {
         students = data.filter((s) => String(s["Adm. No."] || "").trim());
         studentFields = fields.slice();
-        if (!studentFields.includes("TC Number")) studentFields.push("TC Number");
+        ["TC Number", "TC Date"].forEach((f) => {
+          if (!studentFields.includes(f)) studentFields.push(f);
+        });
 
         // Re-apply TC numbers issued earlier in this browser
         students.forEach((s) => {
           const adm = admOf(s);
           if (!String(s["TC Number"] || "").trim() && issued[adm]) {
             s["TC Number"] = issued[adm].tc;
+            s["TC Date"] = issued[adm].date;
           }
         });
 
@@ -1345,6 +1405,7 @@
         document.getElementById("appSection").style.display = "block";
         populateYearDropdown();
         renderBatch();
+        renderIssuedInfo();
       }
 
       function resetApp() {
@@ -1357,6 +1418,27 @@
         document.getElementById("tcAdmNoInput").value = "";
         hideStudentCard();
         hideTCStudentCard();
+      }
+
+      const SAMPLE_FIELDS = ["Adm. No.", "Student Name", "Sex", "Category", "Adm. Date", "D.O.B.", "Course", "I", "II", "III", "IV", "Admitted to", "Left from", "Left on", "Course Status"];
+      const SAMPLE_ROWS = [
+        ["1088", "AYSHATH NASILA T K", "F", "OBC", "22/08/2022", "14/12/2003", "BCom", "2022-2023", "2023-2024", "2024-2025", "", "I Sem", "VI Sem", "31/03/2025", "Course Completed"],
+        ["1425", "NAVYAMOL M", "F", "GENERAL", "17/08/2023", "18/05/2002", "MA Social Science", "2023-2024", "2024-2025", "", "", "I Sem", "IV Sem", "31/03/2025", "Course Completed"],
+        ["1526", "DEVANATH P V", "M", "FEES", "11/07/2024", "04/09/2006", "BA History", "2024-2025", "", "", "", "I Sem", "II Sem", "15/01/2025", "Discontinued"],
+        ["1650", "ANJALI K", "F", "OBC", "01/07/2024", "12/03/2006", "BA English (Honours)", "2024-2025", "2025-2026", "2026-2027", "2027-2028", "I Sem", "VIII Sem", "31/03/2028", "Course Completed"],
+      ];
+
+      function downloadSample(type) {
+        if (type === "csv") {
+          const csv = Papa.unparse({ fields: SAMPLE_FIELDS, data: SAMPLE_ROWS });
+          saveAs(new Blob([csv], { type: "text/csv;charset=utf-8;" }), "Student_List_Sample.csv");
+        } else {
+          const ws = XLSX.utils.aoa_to_sheet([SAMPLE_FIELDS, ...SAMPLE_ROWS]);
+          ws["!cols"] = SAMPLE_FIELDS.map((f) => ({ wch: Math.max(f.length, 12) }));
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "Students");
+          XLSX.writeFile(wb, "Student_List_Sample.xlsx");
+        }
       }
 
       function downloadMasterCSV() {
@@ -1860,8 +1942,9 @@
         const col1 = (student["I"] || "").trim();
         const col2 = (student["II"] || "").trim();
         const col3 = (student["III"] || "").trim();
+        const col4 = (student["IV"] || "").trim();
         const startPeriod = col1;
-        const endPeriod = col3 ? col3 : col2 ? col2 : col1;
+        const endPeriod = col4 || col3 || col2 || col1;
 
         let completionLine = "";
         if (sex === "M") {
@@ -2112,7 +2195,7 @@
         }
 
         document.getElementById("tcAppDate").value = "";
-        document.getElementById("tcIssueDate").value = settings.issueDate || todayISO();
+        setDateInput("tcIssueDate", settings.issueDate || todayISO());
         document.getElementById("tcStudentCard").classList.add("visible");
         document.getElementById("tcAppDate").focus();
       }
@@ -2129,16 +2212,17 @@
         if (!currentTCStudent) return;
         const alertEl = document.getElementById("tcSearchAlert");
         const adm = admOf(currentTCStudent);
-        const appDate = document.getElementById("tcAppDate").value;
-        const issueDate = document.getElementById("tcIssueDate").value;
+        const appDate = readDateInput("tcAppDate");
+        const issueDate = readDateInput("tcIssueDate");
 
         if (!appDate) {
-          showAlert(alertEl, "alert-error", "Please enter the TC Application Date.");
+          showAlert(alertEl, "alert-error", appDate === null ? "TC Application Date is not a valid date (dd-mm-yyyy)." : "Please enter the TC Application Date.");
           document.getElementById("tcAppDate").focus();
           return;
         }
         if (!issueDate) {
-          showAlert(alertEl, "alert-error", "Please enter the Date of Issue.");
+          showAlert(alertEl, "alert-error", issueDate === null ? "Date of Issue is not a valid date (dd-mm-yyyy)." : "Please enter the Date of Issue.");
+          document.getElementById("tcIssueDate").focus();
           return;
         }
         if (batch.some((b) => b.adm === adm)) {
@@ -2152,8 +2236,8 @@
         batch.push({
           adm,
           student: { ...currentTCStudent },
-          appDate: toDMY(appDate),
-          issueDate: toDMY(issueDate),
+          appDate,
+          issueDate,
         });
         saveStore(STORE_BATCH, batch);
         renderBatch();
@@ -2260,9 +2344,21 @@
 
         batch.forEach((b, i) => {
           const tc = incrementTCNumber(settings.nextTC, i);
-          issued[b.adm] = { tc, date: b.issueDate };
-          students.filter((s) => admOf(s) === b.adm).forEach((s) => (s["TC Number"] = tc));
+          issued[b.adm] = {
+            tc,
+            date: b.issueDate,
+            appDate: b.appDate,
+            name: b.student["Student Name"] || "",
+            course: b.student["Course"] || "",
+          };
+          students
+            .filter((s) => admOf(s) === b.adm)
+            .forEach((s) => {
+              s["TC Number"] = tc;
+              s["TC Date"] = b.issueDate;
+            });
         });
+        renderIssuedInfo();
         settings.nextTC = newNext;
         batch = [];
         saveStore(STORE_ISSUED, issued);
@@ -2275,6 +2371,66 @@
           "alert-success",
           `✅ Batch finalized. Next TC Number is now ${newNext}. Use “Download Updated List” to save the TC numbers into your student list.`,
         );
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   ISSUED TC REPORT
+═══════════════════════════════════════════════════════════ */
+      // Merges TCs finalized in this browser with TC numbers already in the uploaded list
+      function getIssuedRecords() {
+        const records = {};
+        Object.entries(issued).forEach(([adm, r]) => {
+          const s = students.find((x) => admOf(x) === adm) || {};
+          records[adm] = {
+            adm,
+            tc: r.tc,
+            date: r.date || "",
+            appDate: r.appDate || "",
+            name: r.name || s["Student Name"] || "",
+            course: r.course || s["Course"] || "",
+          };
+        });
+        students.forEach((s) => {
+          const adm = admOf(s);
+          const tc = String(s["TC Number"] || "").trim();
+          if (tc && !records[adm]) {
+            records[adm] = { adm, tc, date: toDMY(s["TC Date"]), appDate: "", name: s["Student Name"] || "", course: s["Course"] || "" };
+          }
+        });
+        const key = (tc) => {
+          const [n, y] = String(tc).split("/");
+          return [parseInt(y) || 0, parseInt(n) || 0];
+        };
+        return Object.values(records).sort((a, b) => {
+          const [ya, na] = key(a.tc), [yb, nb] = key(b.tc);
+          return ya - yb || na - nb;
+        });
+      }
+
+      function renderIssuedInfo() {
+        const n = getIssuedRecords().length;
+        document.getElementById("btnIssuedReport").disabled = n === 0;
+        document.getElementById("issuedInfo").textContent = n
+          ? `${n} TC(s) issued so far (finalized batches plus TC numbers already in the uploaded list).`
+          : "No TCs issued yet. TCs appear here after a batch is finalized.";
+      }
+
+      function downloadIssuedReport() {
+        const records = getIssuedRecords();
+        if (!records.length) return;
+        const rows = records.map((r, i) => ({
+          "S.No": i + 1,
+          "TC Number": r.tc,
+          "Date of Issue": r.date,
+          "Admission No": r.adm,
+          Name: r.name,
+          Course: r.course,
+        }));
+        const ws = XLSX.utils.json_to_sheet(rows);
+        ws["!cols"] = [{ wch: 6 }, { wch: 12 }, { wch: 14 }, { wch: 14 }, { wch: 28 }, { wch: 24 }];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Issued TCs");
+        XLSX.writeFile(wb, `Issued_TC_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
       }
 
       /* ═══════════════════════════════════════════════════════════
@@ -2478,7 +2634,7 @@
       function fillSettingsForm() {
         document.getElementById("setCollegeName").value = settings.collegeName;
         document.getElementById("setNextTC").value = settings.nextTC;
-        document.getElementById("setIssueDate").value = settings.issueDate;
+        setDateInput("setIssueDate", settings.issueDate);
         document.getElementById("setShowConduct").checked = settings.showConduct !== false;
       }
 
@@ -2490,9 +2646,14 @@
           showAlert(alertEl, "alert-error", "TC Number must look like 32/2025.");
           return;
         }
+        const issueDate = readDateInput("setIssueDate");
+        if (issueDate === null) {
+          showAlert(alertEl, "alert-error", "Default Date of Issue is not a valid date (dd-mm-yyyy).");
+          return;
+        }
         settings.collegeName = college;
         settings.nextTC = nextTC;
-        settings.issueDate = document.getElementById("setIssueDate").value;
+        settings.issueDate = issueDate;
         settings.showConduct = document.getElementById("setShowConduct").checked;
         saveStore(STORE_SETTINGS, settings);
         renderBatch();
@@ -2595,13 +2756,15 @@
         const col1 = (student["I"] || "").trim();
         const col2 = (student["II"] || "").trim();
         const col3 = (student["III"] || "").trim();
+        const col4 = (student["IV"] || "").trim();
 
         const valid = (y) => y && y !== "1899-1900" && /^\d{4}-\d{4}$/.test(y);
 
         const startYear = valid(col1) ? col1.split("-")[0] : "";
         let endYear = "";
 
-        if (valid(col3)) endYear = col3.split("-")[1];
+        if (valid(col4)) endYear = col4.split("-")[1];
+        else if (valid(col3)) endYear = col3.split("-")[1];
         else if (valid(col2)) endYear = col2.split("-")[1];
         else if (valid(col1)) endYear = col1.split("-")[1];
 
@@ -2613,6 +2776,42 @@
       function getTodayStr() {
         const d = new Date();
         return `${d.getDate()}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;
+      }
+
+      /* ── dd-mm-yyyy date inputs ── */
+      function maskDate(el) {
+        let d = el.value.replace(/\D/g, "").slice(0, 8);
+        if (d.length > 4) d = `${d.slice(0, 2)}-${d.slice(2, 4)}-${d.slice(4)}`;
+        else if (d.length > 2) d = `${d.slice(0, 2)}-${d.slice(2)}`;
+        el.value = d;
+      }
+
+      function setDateInput(id, str) {
+        const v = toDMY(str);
+        document.getElementById(id).value = v ? v.replace(/\//g, "-") : "";
+      }
+
+      // Returns "dd/mm/yyyy", "" when empty, or null when not a real date
+      function readDateInput(id) {
+        const v = document.getElementById(id).value.trim();
+        if (!v) return "";
+        if (!/^\d{1,2}[-\/.]\d{1,2}[-\/.]\d{4}$/.test(v)) return null;
+        const p = dateParts(v);
+        const dt = new Date(p.y, p.m - 1, p.d);
+        if (dt.getFullYear() !== p.y || dt.getMonth() !== p.m - 1 || dt.getDate() !== p.d) return null;
+        return toDMY(v);
+      }
+
+      function openPicker(id) {
+        const native = document.getElementById(id).parentElement.querySelector(".date-native");
+        const cur = readDateInput(id);
+        native.value = cur ? cur.split("/").reverse().join("-") : "";
+        try {
+          native.showPicker();
+        } catch (e) {
+          native.focus();
+          native.click();
+        }
       }
 
       function todayISO() {
@@ -2671,6 +2870,7 @@
       }
 
       renderBatch();
+      renderIssuedInfo();
     </script>
   </body>
 </html>
