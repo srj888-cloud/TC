@@ -3,263 +3,736 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Transfer Certificate Generator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>TC Manager – Govt. Arts & Science College Uduma</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
       :root {
-        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --header-gradient: linear-gradient(135deg, #2c3e50, #3498db);
-        --btn-gradient: linear-gradient(135deg, #3498db, #2980b9);
-        --success-bg: #d4edda;
-        --success-color: #155724;
-        --error-bg: #f8d7da;
-        --error-color: #721c24;
-        --info-bg: #d1ecf1;
-        --info-color: #0c5460;
-        --border-color: #e1e8ed;
-        --text-color: #2c3e50;
-        --box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        --navy: #0d2b45;
+        --teal: #1a6b72;
+        --teal-light: #22868e;
+        --gold: #c9963b;
+        --gold-pale: #f7edda;
+        --cream: #faf8f4;
+        --white: #ffffff;
+        --grey-100: #f3f4f6;
+        --grey-200: #e5e7eb;
+        --grey-400: #9ca3af;
+        --grey-700: #374151;
+        --success: #15803d;
+        --success-bg: #dcfce7;
+        --error: #dc2626;
+        --error-bg: #fee2e2;
+        --warning: #d97706;
+        --warning-bg: #fef3c7;
       }
 
-      * {
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
       }
 
       body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: var(--primary-gradient);
+        font-family: "DM Sans", sans-serif;
+        background: var(--cream);
+        color: var(--grey-700);
         min-height: 100vh;
-        padding: 20px;
+        font-size: 15px;
       }
 
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        background: white;
-        border-radius: 15px;
-        box-shadow: var(--box-shadow);
+      /* ── HEADER ─────────────────────────────────────── */
+      header {
+        background: linear-gradient(
+          135deg,
+          var(--navy) 0%,
+          #1a3f5c 60%,
+          var(--teal) 100%
+        );
+        color: white;
+        position: relative;
         overflow: hidden;
       }
-
-      .header {
-        background: var(--header-gradient);
-        color: white;
-        padding: 30px;
-        text-align: center;
-      }
-
-      .header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 10px;
-        font-weight: 300;
-      }
-
-      .header p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-      }
-
-      .form-section {
-        padding: 40px;
-      }
-
-      .form-group {
-        margin-bottom: 25px;
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: var(--text-color);
-      }
-
-      .form-input {
-        width: 100%;
-        padding: 12px 15px;
-        border: 2px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 16px;
-        transition: all 0.3s ease;
-      }
-
-      .form-input:focus {
-        outline: none;
-        border-color: #3498db;
-        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-      }
-
-      .file-upload {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-      }
-
-      .file-upload input[type="file"] {
+      header::before {
+        content: "";
         position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 40px,
+          rgba(255, 255, 255, 0.02) 40px,
+          rgba(255, 255, 255, 0.02) 80px
+        );
+        pointer-events: none;
+      }
+      .header-inner {
+        max-width: 1060px;
+        margin: 0 auto;
+        padding: 28px 24px 24px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        position: relative;
+      }
+      .header-emblem {
+        width: 64px;
+        height: 64px;
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 28px;
+      }
+      .header-text h1 {
+        font-family: "Crimson Pro", Georgia, serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: 0.01em;
+      }
+      .header-text .subtitle {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        font-weight: 300;
+        margin-top: 4px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .header-badge {
+        margin-left: auto;
+        background: var(--gold);
+        color: white;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      /* ── MAIN CONTENT ────────────────────────────────── */
+      main {
+        max-width: 1060px;
+        margin: 0 auto;
+        padding: 32px 24px 60px;
+      }
+
+      /* ── UPLOAD ZONE ────────────────────────────────── */
+      .upload-zone {
+        border: 2.5px dashed var(--teal-light);
+        border-radius: 14px;
+        background: white;
+        padding: 48px 32px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+      .upload-zone:hover,
+      .upload-zone.dragover {
+        border-color: var(--teal);
+        background: #f0fbfb;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px rgba(26, 107, 114, 0.12);
+      }
+      .upload-icon {
+        font-size: 3rem;
+        margin-bottom: 14px;
+        display: block;
+      }
+      .upload-zone h2 {
+        font-family: "Crimson Pro", serif;
+        font-size: 1.5rem;
+        color: var(--navy);
+        margin-bottom: 8px;
+      }
+      .upload-zone p {
+        color: var(--grey-400);
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+      }
+      .upload-zone input[type="file"] {
+        position: absolute;
+        inset: 0;
         opacity: 0;
+        cursor: pointer;
         width: 100%;
         height: 100%;
-        cursor: pointer;
       }
-
-      .file-upload-label {
-        display: block;
-        padding: 15px;
-        border: 2px dashed #3498db;
-        border-radius: 8px;
-        text-align: center;
-        background: #f8f9fa;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .file-upload-label:hover {
-        background: #e3f2fd;
-        border-color: #2980b9;
-      }
-
-      .btn {
-        background: var(--btn-gradient);
+      .btn-upload {
+        display: inline-block;
+        background: var(--teal);
         color: white;
-        border: none;
-        padding: 15px 30px;
+        padding: 10px 28px;
         border-radius: 8px;
-        font-size: 16px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        pointer-events: none;
+        letter-spacing: 0.02em;
+      }
+
+      /* ── STATUS BAR ────────────────────────────────── */
+      .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: var(--success-bg);
+        border: 1px solid #86efac;
+        border-radius: 10px;
+        padding: 12px 20px;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+      }
+      .status-bar .status-icon {
+        font-size: 1.2rem;
+      }
+      .status-bar strong {
+        color: var(--success);
+      }
+      .status-bar .bar-actions {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+      }
+      .status-bar .change-btn {
+        background: none;
+        border: 1px solid #86efac;
+        color: var(--success);
+        padding: 4px 12px;
+        border-radius: 6px;
         cursor: pointer;
-        transition: all 0.3s ease;
-        margin: 10px 0;
+        font-size: 0.82rem;
+        font-family: inherit;
+        font-weight: 500;
+        transition: all 0.15s;
+      }
+      .status-bar .change-btn:hover {
+        background: #bbf7d0;
       }
 
-      .btn:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+      /* ── TABS ─────────────────────────────────────── */
+      .tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--grey-200);
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        background: none;
+        border: none;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        padding: 12px 18px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--grey-400);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .tab-btn:hover {
+        color: var(--navy);
+      }
+      .tab-btn.active {
+        color: var(--teal);
+        border-bottom-color: var(--teal);
+      }
+      .tab-count {
+        display: inline-block;
+        background: var(--gold);
+        color: white;
+        border-radius: 99px;
+        font-size: 0.72rem;
+        padding: 1px 8px;
+        margin-left: 4px;
+        vertical-align: middle;
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
       }
 
+      /* ── CARDS ────────────────────────────────────── */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+      @media (max-width: 640px) {
+        .cards-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .mode-card {
+        background: white;
+        border-radius: 14px;
+        border: 2px solid var(--grey-200);
+        padding: 28px 24px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .mode-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--grey-200);
+        transition: background 0.2s;
+      }
+      .mode-card.active {
+        border-color: var(--teal);
+        box-shadow: 0 4px 20px rgba(26, 107, 114, 0.12);
+      }
+      .mode-card.active::before {
+        background: var(--teal);
+      }
+      .mode-card-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+      .mode-card h3 {
+        font-family: "Crimson Pro", serif;
+        font-size: 1.25rem;
+        color: var(--navy);
+        margin-bottom: 5px;
+      }
+      .mode-card p {
+        font-size: 0.85rem;
+        color: var(--grey-400);
+        line-height: 1.5;
+      }
+
+      /* ── PANELS ────────────────────────────────────── */
+      .panel {
+        background: white;
+        border-radius: 14px;
+        border: 1px solid var(--grey-200);
+        padding: 28px;
+        display: none;
+        margin-bottom: 20px;
+      }
+      .panel.active {
+        display: block;
+      }
+      .panel h2 {
+        font-family: "Crimson Pro", serif;
+        font-size: 1.35rem;
+        color: var(--navy);
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--grey-100);
+      }
+
+      /* ── FORM ELEMENTS ────────────────────────────── */
+      .form-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+      }
+      label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--navy);
+        margin-bottom: 6px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+      input[type="text"],
+      input[type="date"],
+      select {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1.5px solid var(--grey-200);
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.95rem;
+        color: var(--grey-700);
+        background: white;
+        transition: border-color 0.15s;
+        outline: none;
+      }
+      input[type="text"]:focus,
+      input[type="date"]:focus,
+      select:focus {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(26, 107, 114, 0.1);
+      }
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239ca3af' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+        cursor: pointer;
+      }
+
+      .field-group {
+        flex: 1;
+        min-width: 180px;
+      }
+      .hint {
+        font-size: 0.8rem;
+        color: var(--grey-400);
+        margin-top: 4px;
+      }
+
+      /* ── BUTTONS ────────────────────────────────────── */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 22px;
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.15s ease;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: var(--teal);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #14595f;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(26, 107, 114, 0.3);
+      }
+      .btn-secondary {
+        background: var(--navy);
+        color: white;
+      }
+      .btn-secondary:hover {
+        background: #1a3e5c;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(13, 43, 69, 0.3);
+      }
+      .btn-gold {
+        background: var(--gold);
+        color: white;
+      }
+      .btn-gold:hover {
+        background: #b8852e;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(201, 150, 59, 0.35);
+      }
+      .btn-outline {
+        background: white;
+        color: var(--navy);
+        border: 1.5px solid var(--grey-200);
+      }
+      .btn-outline:hover {
+        border-color: var(--navy);
+      }
       .btn:disabled {
-        background: #95a5a6;
+        opacity: 0.5;
         cursor: not-allowed;
         transform: none;
         box-shadow: none;
       }
+      .btn-lg {
+        padding: 13px 28px;
+        font-size: 1rem;
+      }
+      .btn-sm {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+      }
 
-      .preview-section {
-        background: #f8f9fa;
-        padding: 30px;
+      /* ── STUDENT CARD ─────────────────────────────── */
+      .student-card {
         margin-top: 20px;
+        background: var(--gold-pale);
+        border: 1px solid #e8d5a3;
         border-radius: 10px;
+        padding: 18px 20px;
         display: none;
       }
-
-      .data-preview {
-        margin-top: 20px;
-        overflow: auto;
-        max-height: 500px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
+      .student-card.visible {
+        display: block;
+      }
+      .student-card-name {
+        font-family: "Crimson Pro", serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--navy);
+        margin-bottom: 10px;
+      }
+      .student-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        font-size: 0.85rem;
+        color: var(--grey-700);
+        margin-bottom: 16px;
+      }
+      .student-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .meta-label {
+        color: var(--grey-400);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
       }
 
-      .data-table {
+      /* ── VERIFY TABLE ─────────────────────────────── */
+      .verify-table {
         width: 100%;
         border-collapse: collapse;
         background: white;
-        min-width: 100%;
-      }
-
-      .data-table th,
-      .data-table td {
-        padding: 8px 12px;
-        text-align: left;
-        border: 1px solid #ddd;
-        font-size: 14px;
-        white-space: nowrap;
-        min-width: 100px;
-      }
-
-      .data-table th {
-        background: #34495e;
-        color: white;
-        font-weight: 600;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-      }
-
-      .data-table tr:nth-child(even) {
-        background: #f8f9fa;
-      }
-
-      .data-table tr:hover {
-        background: #e3f2fd;
-      }
-
-      .status {
-        padding: 10px 15px;
-        border-radius: 6px;
-        margin: 10px 0;
-        font-weight: 500;
-      }
-
-      .status.success {
-        background: var(--success-bg);
-        color: var(--success-color);
-        border: 1px solid #c3e6cb;
-      }
-
-      .status.error {
-        background: var(--error-bg);
-        color: var(--error-color);
-        border: 1px solid #f5c6cb;
-      }
-
-      .status.info {
-        background: var(--info-bg);
-        color: var(--info-color);
-        border: 1px solid #bee5eb;
-      }
-
-      .progress-bar {
-        width: 100%;
-        height: 6px;
-        background: var(--border-color);
-        border-radius: 3px;
+        border-radius: 8px;
         overflow: hidden;
-        margin: 10px 0;
+        font-size: 0.88rem;
+        margin-bottom: 16px;
+      }
+      .verify-table td {
+        padding: 7px 12px;
+        border-bottom: 1px solid var(--grey-100);
+        vertical-align: top;
+      }
+      .verify-table td:first-child {
+        width: 34%;
+        color: var(--grey-400);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .verify-table td:last-child {
+        font-weight: 500;
+        color: var(--navy);
+      }
+      .verify-table .missing {
+        color: var(--error);
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      /* ── BATCH TABLE ──────────────────────────────── */
+      .batch-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--grey-200);
+        border-radius: 10px;
+        margin-bottom: 16px;
+      }
+      .batch-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86rem;
+      }
+      .batch-table th {
+        background: var(--navy);
+        color: white;
+        text-align: left;
+        padding: 9px 12px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .batch-table td {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--grey-100);
+        white-space: nowrap;
+      }
+      .batch-table tr:nth-child(even) td {
+        background: var(--cream);
+      }
+      .batch-empty {
+        text-align: center;
+        color: var(--grey-400);
+        padding: 28px !important;
+      }
+      .tc-no-pill {
+        background: var(--gold-pale);
+        color: #8a6420;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+      }
+
+      /* ── BULK PANEL ───────────────────────────────── */
+      .year-info-box {
+        margin-top: 16px;
+        background: var(--grey-100);
+        border-radius: 8px;
+        padding: 14px 18px;
+        align-items: center;
+        gap: 14px;
+        font-size: 0.9rem;
         display: none;
       }
+      .year-info-box.visible {
+        display: flex;
+      }
+      .year-count {
+        font-family: "Crimson Pro", serif;
+        font-size: 2.2rem;
+        font-weight: 600;
+        color: var(--teal);
+        line-height: 1;
+      }
+      .year-count-label {
+        color: var(--grey-400);
+        font-size: 0.8rem;
+        margin-top: 2px;
+      }
 
-      .progress-fill {
+      /* ── PROGRESS ─────────────────────────────────── */
+      .progress-wrap {
+        margin-top: 16px;
+        display: none;
+      }
+      .progress-wrap.visible {
+        display: block;
+      }
+      .progress-bar-bg {
+        background: var(--grey-200);
+        border-radius: 99px;
+        height: 8px;
+        overflow: hidden;
+        margin-top: 8px;
+      }
+      .progress-bar-fill {
         height: 100%;
-        background: var(--btn-gradient);
+        background: linear-gradient(90deg, var(--teal), var(--gold));
+        border-radius: 99px;
+        transition: width 0.1s linear;
         width: 0%;
-        transition: width 0.3s ease;
+      }
+      .progress-text {
+        font-size: 0.82rem;
+        color: var(--grey-400);
+        margin-top: 6px;
       }
 
-      .record-count {
-        margin-top: 10px;
-        padding: 10px;
-        background: #e8f4fd;
-        border-radius: 5px;
-        font-weight: 500;
-        color: var(--text-color);
+      /* ── ALERT ────────────────────────────────────── */
+      .alert {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        margin-top: 12px;
+        display: none;
+      }
+      .alert.visible {
+        display: block;
+      }
+      .alert-error {
+        background: var(--error-bg);
+        color: var(--error);
+        border: 1px solid #fca5a5;
+      }
+      .alert-warning {
+        background: var(--warning-bg);
+        color: var(--warning);
+        border: 1px solid #fcd34d;
+      }
+      .alert-success {
+        background: var(--success-bg);
+        color: var(--success);
+        border: 1px solid #86efac;
       }
 
-      /* TC Certificate Styles */
+      footer {
+        text-align: center;
+        padding: 20px;
+        font-size: 0.78rem;
+        color: var(--grey-400);
+        border-top: 1px solid var(--grey-200);
+        background: white;
+      }
+
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        flex-shrink: 0;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-up {
+        animation: fadeUp 0.35s ease forwards;
+      }
+
+      /* ── TC CERTIFICATE (layout from TC.html) ─────── */
       .tc-container {
         display: none;
-        position: relative;
-        width: 100%;
-        background: white;
-        z-index: 1000;
         margin-top: 20px;
+        overflow-x: auto;
+        background: var(--grey-100);
+        border-radius: 14px;
+        padding: 20px;
+      }
+      .tc-controls {
+        position: sticky;
+        top: 10px;
+        left: 0;
+        z-index: 5;
+        background: var(--navy);
+        color: white;
+        padding: 14px 18px;
         border-radius: 10px;
-        box-shadow: var(--box-shadow);
-        overflow: hidden;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .tc-controls h4 {
+        font-family: "Crimson Pro", serif;
+        font-size: 1.15rem;
+        margin-right: auto;
       }
 
       @page {
@@ -268,20 +741,17 @@
       }
 
       .tc-page {
-        width: 100%;
-        max-width: 1000px;
+        width: 1000px;
         margin: 0 auto 20px auto;
         background: white;
+        color: #000;
         display: flex;
         gap: 10px;
         border: 1px solid #ddd;
-        border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         page-break-after: always;
         position: relative;
       }
-
       .tc-page::after {
         content: "";
         position: absolute;
@@ -292,11 +762,9 @@
         border-left: 2px dotted #666;
         z-index: 1;
       }
-
       .tc-page:last-child {
         page-break-after: auto;
       }
-
       .certificate {
         flex: 1;
         padding: 20px;
@@ -305,14 +773,14 @@
         font-size: 12px;
         line-height: 1.2;
       }
-
+      /* Fixed columns (see colgroup): label = cols 2+3 = 222px in both copies */
       .certificate-table {
         width: 100%;
+        table-layout: fixed;
         border-collapse: collapse;
         margin-top: 8px;
         font-size: 12px;
       }
-
       .certificate-table td {
         vertical-align: top;
         padding: 2px 4px;
@@ -320,37 +788,25 @@
         font-size: 12px;
         line-height: 1.1;
       }
-
       .serial-col {
-        width: 1%;
-        font-weight: normal;
         padding: 1px 1px;
-        min-width: 15px;
-        max-width: 20px;
-      }
-      .label-col {
-        width: 50%;
       }
       .data-col {
-        width: 49%;
         font-weight: 700;
         font-size: 12px;
       }
-
       .certificate:first-child {
+        padding-left: 40px;
         padding-right: 15px;
       }
-
       .content-wrapper {
         padding-right: 15px;
         margin-right: 15px;
       }
-
       .certificate:last-child .content-wrapper {
         padding-right: 0;
         margin-right: 0;
       }
-
       .certificate-title {
         text-align: center;
         font-size: 14px;
@@ -359,92 +815,48 @@
         text-transform: uppercase;
         letter-spacing: 1px;
       }
-
       .header-info {
         margin-bottom: 10px;
         font-size: 13px;
       }
-
-      .controls {
-        position: sticky;
-        top: 20px;
-        right: 20px;
-        z-index: 1001;
-        background: var(--header-gradient);
-        color: white;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        margin-bottom: 20px;
-        text-align: center;
+      .certificate:last-child .header-info {
+        padding-right: 25px;
       }
-
-      .controls h4 {
-        margin-bottom: 10px;
-        font-size: 16px;
-      }
-
-      .controls button {
-        margin: 5px;
-        background: white;
-        color: var(--text-color);
-        border: 2px solid white;
-        font-weight: 600;
-      }
-
-      .controls button:hover {
-        background: #f8f9fa;
-        transform: translateY(-1px);
-      }
-
       .exam-section {
-        position: relative;
         height: 140px;
         width: 100%;
+        padding: 10px 0 0 5px;
       }
-
-      .exam-line {
-        position: absolute;
-        background: #000;
-      }
-
-      .exam-line.top {
-        top: 10px;
-        left: 5px;
-        width: 60px;
-        height: 2px;
-        border-top: 2px solid #000;
-      }
-      .exam-line.vertical {
-        top: 10px;
-        left: 35px;
-        width: 2px;
-        height: 125px;
-        border-left: 2px solid #000;
-      }
-      .exam-line.bottom {
-        top: 133px;
-        left: 5px;
-        width: 60px;
-        height: 2px;
-        border-top: 2px solid #000;
+      .exam-section svg {
+        display: block;
       }
 
       @media print {
-        .controls {
-          display: none;
-        }
         body {
           background: white;
         }
+        header,
+        footer,
+        .status-bar,
+        .tabs,
+        .panel,
+        .tc-controls,
+        #uploadSection {
+          display: none !important;
+        }
+        main {
+          padding: 0;
+          max-width: none;
+        }
+        .tab-content {
+          display: block !important;
+        }
         .tc-container {
-          position: static;
           display: block;
           padding: 0;
-          overflow: visible;
           margin: 0;
-          border-radius: 0;
-          box-shadow: none;
+          background: white;
+          overflow: visible;
         }
         .tc-page {
           width: 297mm;
@@ -452,1001 +864,1813 @@
           padding: 5mm 2mm 5mm 5mm;
           margin: 0 auto;
           border: none;
-          box-shadow: none;
-          gap: 10px;
-          max-width: none;
         }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <h1>Transfer Certificate Generator</h1>
-        <p>Generate professional transfer certificates from CSV/Excel data</p>
+    <header>
+      <div class="header-inner">
+        <div class="header-emblem">🏛️</div>
+        <div class="header-text">
+          <h1>Transfer Certificate Manager</h1>
+          <div class="subtitle">
+            Govt. Arts and Science College, Uduma · Kerala
+          </div>
+        </div>
+        <div class="header-badge">Client-Side · Offline</div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ── UPLOAD SECTION ── -->
+      <div id="uploadSection" style="margin-bottom: 32px">
+        <div class="upload-zone" id="dropZone">
+          <input type="file" id="csvFile" accept=".csv,.xlsx,.xls" />
+          <span class="upload-icon">📂</span>
+          <h2>Upload Student Master List</h2>
+          <p>
+            Drag &amp; drop your CSV / Excel file here, or click to browse.<br />Columns
+            required:
+            <strong
+              >Adm. No., Student Name, Sex, Category, Adm. Date, D.O.B., Course,
+              I, II, III, Admitted to, Left from, Left on, Course Status, TC
+              Number</strong
+            >
+          </p>
+          <span class="btn-upload">Choose File</span>
+        </div>
       </div>
 
-      <div class="form-section">
-        <div class="form-group">
-          <label for="collegeName">College Name:</label>
-          <input
-            type="text"
-            id="collegeName"
-            class="form-input"
-            value="Name of the College"
-            placeholder="Enter college name"
-          />
-        </div>
-
-        <button class="btn" id="downloadTemplateBtn">
-          📥 Download CSV Template
-        </button>
-
-        <div class="form-group">
-          <label for="csvFile">Upload CSV/Excel File:</label>
-          <div class="file-upload">
-            <input type="file" id="csvFile" accept=".csv,.xlsx,.xls" />
-            <label for="csvFile" class="file-upload-label">
-              <strong>Choose file</strong> or drag and drop<br />
-              <small>Supports CSV, Excel (.xlsx, .xls)</small>
-            </label>
+      <!-- ── APP SECTION (shown after file loaded) ── -->
+      <div id="appSection" style="display: none">
+        <div class="status-bar fade-up" id="statusBar">
+          <span class="status-icon">✅</span>
+          <div>
+            <strong id="loadedCount">0 students</strong> loaded from
+            <span id="loadedFile">file.csv</span>
+          </div>
+          <div class="bar-actions">
+            <button class="change-btn" onclick="downloadMasterCSV()">
+              ⬇️ Download Updated List
+            </button>
+            <button class="change-btn" onclick="resetApp()">Change File</button>
           </div>
         </div>
 
-        <button class="btn" id="previewBtn" disabled>Preview Data</button>
-        <button class="btn" id="generateBtn" disabled>Generate All TCs</button>
-        <button class="btn" id="downloadExcelBtn" disabled>
-          Download TC Summary Excel
-        </button>
-
-        <div id="status"></div>
-        <div class="progress-bar" id="progressBar">
-          <div class="progress-fill" id="progressFill"></div>
+        <div class="tabs">
+          <button class="tab-btn active" id="tabBtnApp" onclick="selectTab('app')">
+            📄 TC Application
+          </button>
+          <button class="tab-btn" id="tabBtnIssue" onclick="selectTab('issue')">
+            🎓 Issue TC (Batch) <span class="tab-count" id="tabBatchCount">0</span>
+          </button>
+          <button class="tab-btn" id="tabBtnSettings" onclick="selectTab('settings')">
+            ⚙️ Settings
+          </button>
         </div>
 
-        <div class="preview-section" id="previewSection">
-          <h3>Data Preview</h3>
-          <div class="record-count" id="recordCount"></div>
-          <div class="data-preview" id="dataPreview"></div>
+        <!-- ═════════════ TAB: TC APPLICATION ═════════════ -->
+        <div class="tab-content active" id="tabApp">
+          <div class="cards-grid">
+            <div
+              class="mode-card active"
+              id="cardIndividual"
+              onclick="selectMode('individual')"
+            >
+              <div class="mode-card-icon">🔍</div>
+              <h3>Individual Application</h3>
+              <p>
+                Search by Admission Number and download a single TC application
+                as PDF.
+              </p>
+            </div>
+            <div class="mode-card" id="cardBulk" onclick="selectMode('bulk')">
+              <div class="mode-card-icon">📦</div>
+              <h3>Bulk Download</h3>
+              <p>
+                Filter by academic year (Admission Year) and download all TC
+                applications course-wise.
+              </p>
+            </div>
+          </div>
+
+          <!-- ── INDIVIDUAL PANEL ── -->
+          <div class="panel active" id="panelIndividual">
+            <h2>📄 Individual TC Application</h2>
+
+            <div class="form-row">
+              <div class="field-group">
+                <label for="admNoInput">Admission Number</label>
+                <input
+                  type="text"
+                  id="admNoInput"
+                  placeholder="e.g. 1088"
+                  onkeydown="if (event.key === 'Enter') searchStudent();"
+                />
+              </div>
+              <button
+                class="btn btn-primary"
+                onclick="searchStudent()"
+                style="flex-shrink: 0"
+              >
+                <span>🔍</span> Search
+              </button>
+            </div>
+
+            <div class="alert alert-error" id="searchError"></div>
+
+            <div class="student-card" id="studentCard">
+              <div class="student-card-name" id="cardName"></div>
+              <div class="student-meta" id="cardMeta"></div>
+
+              <div class="form-row" style="margin-top: 15px; margin-bottom: 5px">
+                <div class="field-group">
+                  <label for="singleFormType">Application Type</label>
+                  <select id="singleFormType">
+                    <option value="both">Both (TC + CD Refund)</option>
+                    <option value="tc" selected>Transfer Certificate Only</option>
+                    <option value="cd">Caution Deposit Refund Only</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px">
+                <button
+                  class="btn btn-secondary btn-lg"
+                  id="btnDownloadSingle"
+                  onclick="downloadSingle()"
+                >
+                  <span>⬇️</span> Download PDF
+                </button>
+                <button
+                  class="btn btn-primary btn-lg"
+                  id="btnPreviewSingle"
+                  onclick="previewSingle()"
+                >
+                  <span>👁️</span> Preview PDF
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── BULK PANEL ── -->
+          <div class="panel" id="panelBulk">
+            <h2>📦 Bulk TC Application Download</h2>
+
+            <div class="form-row">
+              <div class="field-group">
+                <label for="yearSelect">Admission Academic Year (Column I)</label>
+                <select id="yearSelect" onchange="onYearChange()">
+                  <option value="">-- Select Academic Year --</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="bulkFormType">Application Type</label>
+                <select id="bulkFormType">
+                  <option value="both">Both (TC + CD Refund)</option>
+                  <option value="tc" selected>Transfer Certificate Only</option>
+                  <option value="cd">Caution Deposit Refund Only</option>
+                </select>
+              </div>
+            </div>
+
+            <div
+              id="courseSelectionWrap"
+              style="display: none; margin-top: 15px; margin-bottom: 20px"
+            >
+              <label style="display: flex; justify-content: space-between; align-items: center">
+                <span>Select Courses to Generate:</span>
+                <span>
+                  <a href="#" onclick="toggleAllCourses(true); return false;" style="color: var(--teal); font-size: 0.8rem; text-decoration: none; font-weight: 500">Select All</a>
+                  &nbsp;|&nbsp;
+                  <a href="#" onclick="toggleAllCourses(false); return false;" style="color: var(--teal); font-size: 0.8rem; text-decoration: none; font-weight: 500">None</a>
+                </span>
+              </label>
+              <div
+                id="courseCheckboxes"
+                style="max-height: 160px; overflow-y: auto; border: 1.5px solid var(--grey-200); border-radius: 8px; padding: 12px; background: white; margin-top: 8px"
+              ></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap">
+              <button
+                class="btn btn-gold btn-lg"
+                id="btnBulkDownload"
+                onclick="downloadBulk()"
+                disabled
+              >
+                <span>📦</span> Download ZIP
+              </button>
+              <button
+                class="btn btn-primary btn-lg"
+                id="btnBulkPreview"
+                onclick="previewBulk()"
+                disabled
+              >
+                <span>👁️</span> Preview PDF
+              </button>
+            </div>
+
+            <div class="year-info-box" id="yearInfoBox">
+              <div>
+                <div class="year-count" id="yearCount">0</div>
+                <div class="year-count-label">students found</div>
+              </div>
+              <div style="color: var(--grey-400); font-size: 0.85rem; line-height: 1.5">
+                Download gives a ZIP with one PDF per course; Preview opens all<br />
+                selected applications in a single PDF.
+              </div>
+            </div>
+
+            <div class="progress-wrap" id="progressWrap">
+              <div style="font-size: 0.85rem; color: var(--grey-700)">
+                Generating PDFs… <span id="progressLabel">0 / 0</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+              </div>
+              <div class="progress-text" id="progressText">Please wait…</div>
+            </div>
+
+            <div class="alert" id="bulkAlert"></div>
+          </div>
+        </div>
+
+        <!-- ═════════════ TAB: ISSUE TC (BATCH) ═════════════ -->
+        <div class="tab-content" id="tabIssue">
+          <div class="panel active">
+            <h2>🔍 Find Student</h2>
+            <div class="form-row" style="margin-bottom: 0">
+              <div class="field-group">
+                <label for="tcAdmNoInput">Admission Number</label>
+                <input
+                  type="text"
+                  id="tcAdmNoInput"
+                  placeholder="e.g. 1088"
+                  onkeydown="if (event.key === 'Enter') searchTCStudent();"
+                />
+              </div>
+              <button class="btn btn-primary" onclick="searchTCStudent()" style="flex-shrink: 0">
+                <span>🔍</span> Search
+              </button>
+            </div>
+            <div class="alert" id="tcSearchAlert"></div>
+
+            <div class="student-card" id="tcStudentCard">
+              <div class="student-card-name" id="tcCardName"></div>
+              <div style="font-size: 0.8rem; color: var(--grey-400); margin-bottom: 8px">
+                Verify the details below – they will be printed on the TC as shown.
+              </div>
+              <table class="verify-table" id="tcVerifyTable"></table>
+              <div class="alert" id="tcCardWarning"></div>
+
+              <div class="form-row" style="margin-top: 16px; margin-bottom: 0">
+                <div class="field-group">
+                  <label for="tcAppDate">TC Application Date *</label>
+                  <input type="date" id="tcAppDate" />
+                </div>
+                <div class="field-group">
+                  <label for="tcIssueDate">Date of Issue</label>
+                  <input type="date" id="tcIssueDate" />
+                </div>
+                <button class="btn btn-gold btn-lg" onclick="addToBatch()" style="flex-shrink: 0">
+                  <span>➕</span> Add to Batch
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel active">
+            <h2>📋 Current Batch</h2>
+            <div class="batch-wrap">
+              <table class="batch-table">
+                <thead>
+                  <tr>
+                    <th>S.No</th>
+                    <th>TC No</th>
+                    <th>Adm No</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Application Date</th>
+                    <th>Issue Date</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="batchBody"></tbody>
+              </table>
+            </div>
+            <div class="hint" id="batchHint" style="margin-bottom: 14px"></div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap">
+              <button class="btn btn-secondary btn-lg" id="btnGenerateBatch" onclick="generateBatch()">
+                <span>🎓</span> Generate Batch
+              </button>
+              <button class="btn btn-outline" id="btnClearBatch" onclick="clearBatch()">
+                Clear Batch
+              </button>
+            </div>
+            <div class="alert" id="batchAlert"></div>
+          </div>
+
+          <div class="tc-container" id="tcContainer"></div>
+        </div>
+
+        <!-- ═════════════ TAB: SETTINGS ═════════════ -->
+        <div class="tab-content" id="tabSettings">
+          <div class="panel active">
+            <h2>⚙️ TC Settings</h2>
+            <div class="form-row">
+              <div class="field-group" style="flex: 2">
+                <label for="setCollegeName">College Name (printed on TC)</label>
+                <input type="text" id="setCollegeName" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field-group">
+                <label for="setNextTC">Next TC Number</label>
+                <input type="text" id="setNextTC" placeholder="e.g. 32/2025" />
+                <div class="hint">Format: number/year. Advances automatically when a batch is finalized.</div>
+              </div>
+              <div class="field-group">
+                <label for="setIssueDate">Default Date of Issue</label>
+                <input type="date" id="setIssueDate" />
+                <div class="hint">Pre-filled when adding a student to the batch.</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; text-transform: none; font-size: 0.9rem">
+                <input type="checkbox" id="setShowConduct" />
+                Include “Character and Conduct” row on the TC (row 14)
+              </label>
+            </div>
+            <button class="btn btn-primary" onclick="saveSettingsFromForm()">
+              <span>💾</span> Save Settings
+            </button>
+            <div class="alert" id="settingsAlert"></div>
+          </div>
         </div>
       </div>
+    </main>
 
-      <div class="tc-container" id="tcContainer"></div>
-    </div>
+    <footer>
+      All processing is done entirely in your browser. No data is sent to any
+      server. &nbsp;·&nbsp; Govt. Arts and Science College, Uduma
+    </footer>
 
     <script>
-      class TCGenerator {
-        constructor() {
-          this.studentsData = [];
-          this.collegeName = "";
-          this.startingTCNumber = "";
-          this.initializeEventListeners();
-          this.showStatus("Upload a CSV or Excel file to get started.", "info");
+      /* ═══════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+      let students = [];
+      let studentFields = [];
+      let currentStudent = null;
+      let currentTCStudent = null;
+      let currentMode = "individual";
+
+      const STORE_SETTINGS = "tcm_settings";
+      const STORE_BATCH = "tcm_batch";
+      const STORE_ISSUED = "tcm_issued";
+
+      let settings = loadStore(STORE_SETTINGS, {
+        collegeName: "Govt. Arts and Science College, Uduma",
+        nextTC: "",
+        issueDate: "",
+      });
+      // batch item: { adm, student, appDate, issueDate } (dates dd/mm/yyyy)
+      let batch = loadStore(STORE_BATCH, []);
+      // issued: { admNo: { tc, date } }
+      let issued = loadStore(STORE_ISSUED, {});
+
+      function loadStore(key, fallback) {
+        try {
+          const v = localStorage.getItem(key);
+          return v ? JSON.parse(v) : fallback;
+        } catch (e) {
+          return fallback;
         }
+      }
 
-        initializeEventListeners() {
-          document
-            .getElementById("csvFile")
-            .addEventListener("change", (e) => this.handleFileUpload(e));
-          document
-            .getElementById("downloadTemplateBtn")
-            .addEventListener("click", () => this.downloadCSVTemplate());
-          document
-            .getElementById("previewBtn")
-            .addEventListener("click", () => this.previewData());
-          document
-            .getElementById("generateBtn")
-            .addEventListener("click", () => this.generateAllTCs());
-          document
-            .getElementById("downloadExcelBtn")
-            .addEventListener("click", () => this.downloadTCSummaryExcel());
+      function saveStore(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+        } catch (e) {
+          console.warn("Could not save to browser storage", e);
         }
+      }
 
-        // Utility Functions
-        numberToWords(num) {
-          const ones = [
-            "",
-            "one",
-            "two",
-            "three",
-            "four",
-            "five",
-            "six",
-            "seven",
-            "eight",
-            "nine",
-            "ten",
-            "eleven",
-            "twelve",
-            "thirteen",
-            "fourteen",
-            "fifteen",
-            "sixteen",
-            "seventeen",
-            "eighteen",
-            "nineteen",
-          ];
-          const tens = [
-            "",
-            "",
-            "twenty",
-            "thirty",
-            "forty",
-            "fifty",
-            "sixty",
-            "seventy",
-            "eighty",
-            "ninety",
-          ];
-          const scales = ["", "thousand", "million", "billion"];
+      /* ═══════════════════════════════════════════════════════════
+   UPLOAD / PARSE
+═══════════════════════════════════════════════════════════ */
+      const dropZone = document.getElementById("dropZone");
+      const csvFile = document.getElementById("csvFile");
 
-          if (num === 0) return "zero";
+      csvFile.addEventListener("change", (e) => {
+        if (e.target.files[0]) handleFile(e.target.files[0]);
+      });
 
-          function convertHundreds(n) {
-            let result = "";
-            if (n >= 100) {
-              result += ones[Math.floor(n / 100)] + " hundred ";
-              n %= 100;
-            }
-            if (n >= 20) {
-              result += tens[Math.floor(n / 10)] + " ";
-              n %= 10;
-            }
-            if (n > 0) {
-              result += ones[n] + " ";
-            }
-            return result.trim();
-          }
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+      });
+      dropZone.addEventListener("dragleave", () =>
+        dropZone.classList.remove("dragover"),
+      );
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        const f = e.dataTransfer.files[0];
+        if (f) handleFile(f);
+      });
 
-          let result = "";
-          let scaleIndex = 0;
-          while (num > 0) {
-            if (num % 1000 !== 0) {
-              result =
-                convertHundreds(num % 1000) +
-                (scales[scaleIndex] ? " " + scales[scaleIndex] : "") +
-                " " +
-                result;
-            }
-            num = Math.floor(num / 1000);
-            scaleIndex++;
-          }
-          return result.trim();
-        }
-
-        dateToWords(dateStr) {
-          if (!dateStr) return "";
-
-          const standardized = this.standardizeDateFormat(dateStr);
-          const parts = standardized.split("/");
-
-          if (parts.length !== 3) return dateStr;
-
-          const [day, month, year] = parts;
-          const months = [
-            "",
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
-          ];
-
-          const dayWords = this.numberToWords(parseInt(day));
-          const monthName = months[parseInt(month)] || month;
-          const yearWords = this.numberToWords(parseInt(year));
-
-          const capitalizedDay = dayWords
-            .split(" ")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
-          const capitalizedYear = yearWords
-            .split(" ")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
-
-          return `${capitalizedDay} ${monthName} ${capitalizedYear}`;
-        }
-
-        standardizeDateFormat(dateStr) {
-          if (!dateStr) return "";
-
-          let dateString = dateStr.toString().trim();
-          let day, month, year;
-
-          if (dateString.includes("-")) {
-            const parts = dateString.split("-");
-            if (parts.length === 3) {
-              if (parts[0].length === 4) {
-                [year, month, day] = parts;
-              } else {
-                [day, month, year] = parts;
-              }
-            }
-          } else if (dateString.includes("/")) {
-            const parts = dateString.split("/");
-            if (parts.length === 3) {
-              [day, month, year] = parts;
-            }
-          } else {
-            return dateString;
-          }
-
-          if (day && month && year) {
-            day = day.toString().padStart(2, "0");
-            month = month.toString().padStart(2, "0");
-            return `${day}/${month}/${year}`;
-          }
-
-          return dateString;
-        }
-
-        getTodayDate() {
-          const today = new Date();
-          const day = String(today.getDate()).padStart(2, "0");
-          const month = String(today.getMonth() + 1).padStart(2, "0");
-          const year = today.getFullYear();
-          return `${day}/${month}/${year}`;
-        }
-
-        incrementTCNumber(tcNumber, index) {
-          if (!tcNumber) return "";
-          const parts = tcNumber.split("/");
-          if (parts.length === 2) {
-            const num = parseInt(parts[0]) + index;
-            return `${num}/${parts[1]}`;
-          }
-          return tcNumber;
-        }
-
-        // File Processing
-        handleFileUpload(e) {
-          const file = e.target.files[0];
-          if (!file) return;
-
-          const fileName = file.name.toLowerCase();
-          if (fileName.endsWith(".csv")) {
-            this.handleCSV(file);
-          } else if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
-            this.handleExcel(file);
-          } else {
-            this.showStatus("Please upload a CSV or Excel file.", "error");
-          }
-        }
-
-        handleCSV(file) {
+      function handleFile(file) {
+        const name = file.name.toLowerCase();
+        if (name.endsWith(".csv")) {
           Papa.parse(file, {
-            header: false,
-            dynamicTyping: true,
-            skipEmptyLines: false,
-            complete: (results) => {
-              // Extract starting TC number from B1 (row 0, column 1)
-              const startingTC =
-                results.data[0] && results.data[0][1]
-                  ? results.data[0][1].toString().trim()
-                  : "";
-
-              if (!startingTC) {
-                this.showStatus(
-                  "Starting TC Number not found in cell B1. Please add it to the CSV file.",
-                  "error",
-                );
-                this.setButtonState("previewBtn", true);
-                return;
-              }
-
-              this.startingTCNumber = startingTC;
-
-              // Extract headers from row 2 (index 1)
-              const headers = results.data[1];
-
-              if (!headers || headers.length === 0) {
-                this.showStatus(
-                  "No headers found in row 2 of CSV file.",
-                  "error",
-                );
-                this.setButtonState("previewBtn", true);
-                return;
-              }
-
-              // Extract data from row 3 onwards (index 2+)
-              const dataRows = results.data.slice(2);
-
-              // Convert to object array
-              const jsonData = dataRows.map((row) => {
-                const obj = {};
-                headers.forEach((header, index) => {
-                  if (header) {
-                    obj[header] = row[index] || "";
-                  }
-                });
-                return obj;
-              });
-
-              this.processData(jsonData, results.errors);
-            },
-            error: (error) =>
-              this.showStatus("Error parsing CSV: " + error.message, "error"),
+            header: true,
+            skipEmptyLines: true,
+            transformHeader: (h) => h.trim(),
+            complete: (results) =>
+              onDataLoaded(results.data, results.meta.fields, file.name),
+            error: (err) => alert("Error parsing CSV: " + err.message),
           });
-        }
-
-        handleExcel(file) {
+        } else if (name.endsWith(".xlsx") || name.endsWith(".xls")) {
           const reader = new FileReader();
           reader.onload = (e) => {
             try {
-              const data = new Uint8Array(e.target.result);
-              const workbook = XLSX.read(data, { type: "array" });
-              const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-              const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
-                header: 1,
+              const wb = XLSX.read(new Uint8Array(e.target.result), {
+                type: "array",
+                cellDates: true,
               });
-
-              // Extract starting TC number from B1 (row 0, column 1)
-              const startingTC =
-                jsonData[0] && jsonData[0][1]
-                  ? jsonData[0][1].toString().trim()
-                  : "";
-
-              if (!startingTC) {
-                this.showStatus(
-                  "Starting TC Number not found in cell B1. Please add it to the Excel file.",
-                  "error",
-                );
-                this.setButtonState("previewBtn", true);
-                return;
-              }
-
-              this.startingTCNumber = startingTC;
-
-              // Extract headers from row 2 (index 1)
-              const headers = jsonData[1];
-
-              if (!headers || headers.length === 0) {
-                this.showStatus(
-                  "No headers found in row 2 of Excel file.",
-                  "error",
-                );
-                this.setButtonState("previewBtn", true);
-                return;
-              }
-
-              // Extract data from row 3 onwards (index 2+)
-              const dataRows = jsonData.slice(2);
-
-              // Convert to object array with headers
-              const rows = dataRows.map((row) => {
-                const obj = {};
-                headers.forEach((header, index) => {
-                  if (header) {
-                    obj[header] = row[index] || "";
-                  }
-                });
-                return obj;
+              const ws = wb.Sheets[wb.SheetNames[0]];
+              const rows = XLSX.utils.sheet_to_json(ws, {
+                raw: false,
+                dateNF: "dd/mm/yyyy",
+                defval: "",
               });
-
-              this.processData(rows, []);
-            } catch (error) {
-              this.showStatus(
-                "Error parsing Excel file: " + error.message,
-                "error",
-              );
+              const data = rows.map((r) => {
+                const o = {};
+                Object.keys(r).forEach((k) => (o[k.trim()] = String(r[k])));
+                return o;
+              });
+              const fields = data.length ? Object.keys(data[0]) : [];
+              onDataLoaded(data, fields, file.name);
+            } catch (err) {
+              alert("Error parsing Excel file: " + err.message);
             }
           };
           reader.readAsArrayBuffer(file);
+        } else {
+          alert("Please upload a CSV or Excel file.");
+        }
+      }
+
+      function onDataLoaded(data, fields, fileName) {
+        students = data.filter((s) => String(s["Adm. No."] || "").trim());
+        studentFields = fields.slice();
+        if (!studentFields.includes("TC Number")) studentFields.push("TC Number");
+
+        // Re-apply TC numbers issued earlier in this browser
+        students.forEach((s) => {
+          const adm = admOf(s);
+          if (!String(s["TC Number"] || "").trim() && issued[adm]) {
+            s["TC Number"] = issued[adm].tc;
+          }
+        });
+
+        document.getElementById("loadedCount").textContent =
+          students.length + " students";
+        document.getElementById("loadedFile").textContent = fileName;
+        document.getElementById("uploadSection").style.display = "none";
+        document.getElementById("appSection").style.display = "block";
+        populateYearDropdown();
+        renderBatch();
+      }
+
+      function resetApp() {
+        students = [];
+        currentStudent = null;
+        csvFile.value = "";
+        document.getElementById("uploadSection").style.display = "block";
+        document.getElementById("appSection").style.display = "none";
+        document.getElementById("admNoInput").value = "";
+        document.getElementById("tcAdmNoInput").value = "";
+        hideStudentCard();
+        hideTCStudentCard();
+      }
+
+      function downloadMasterCSV() {
+        const csv = Papa.unparse(students, { columns: studentFields });
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const stamp = new Date().toISOString().slice(0, 10);
+        saveAs(blob, `Student_List_${stamp}.csv`);
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   TABS / MODE SELECTOR
+═══════════════════════════════════════════════════════════ */
+      function selectTab(tab) {
+        const map = { app: "App", issue: "Issue", settings: "Settings" };
+        Object.entries(map).forEach(([k, id]) => {
+          document.getElementById("tabBtn" + id).classList.toggle("active", k === tab);
+          document.getElementById("tab" + id).classList.toggle("active", k === tab);
+        });
+        if (tab === "settings") fillSettingsForm();
+      }
+
+      function selectMode(mode) {
+        currentMode = mode;
+        document
+          .getElementById("cardIndividual")
+          .classList.toggle("active", mode === "individual");
+        document
+          .getElementById("cardBulk")
+          .classList.toggle("active", mode === "bulk");
+        document
+          .getElementById("panelIndividual")
+          .classList.toggle("active", mode === "individual");
+        document
+          .getElementById("panelBulk")
+          .classList.toggle("active", mode === "bulk");
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   YEAR DROPDOWN
+═══════════════════════════════════════════════════════════ */
+      function populateYearDropdown() {
+        const sel = document.getElementById("yearSelect");
+        sel.innerHTML = '<option value="">-- Select Academic Year --</option>';
+
+        const years = [
+          ...new Set(
+            students
+              .map((s) => (s["I"] || "").trim())
+              .filter((y) => y && y !== "1899-1900"),
+          ),
+        ].sort();
+
+        years.forEach((y) => {
+          const opt = document.createElement("option");
+          opt.value = y;
+          opt.textContent = y;
+          sel.appendChild(opt);
+        });
+        onYearChange();
+      }
+
+      function onYearChange() {
+        const year = document.getElementById("yearSelect").value;
+        const infoBox = document.getElementById("yearInfoBox");
+        const btn = document.getElementById("btnBulkDownload");
+        const btnPreview = document.getElementById("btnBulkPreview");
+        const bulkAlert = document.getElementById("bulkAlert");
+        const courseWrap = document.getElementById("courseSelectionWrap");
+        const courseBox = document.getElementById("courseCheckboxes");
+
+        bulkAlert.className = "alert";
+
+        if (!year) {
+          infoBox.classList.remove("visible");
+          courseWrap.style.display = "none";
+          courseBox.innerHTML = "";
+          btn.disabled = true;
+          btnPreview.disabled = true;
+          return;
         }
 
-        processData(data, errors) {
-          if (errors && errors.length > 0) {
-            console.warn("Data parsing warnings:", errors);
-          }
+        const filtered = getStudentsForYear(year);
+        document.getElementById("yearCount").textContent = filtered.length;
+        infoBox.classList.add("visible");
 
-          const filteredData = data.filter((row) => {
-            const hasName = row["Name"] && row["Name"].toString().trim() !== "";
-            const hasAdmNo =
-              row["Adm No"] && row["Adm No"].toString().trim() !== "";
-            const hasAnyData = Object.values(row).some(
-              (value) =>
-                value !== null &&
-                value !== undefined &&
-                value.toString().trim() !== "",
-            );
-            return hasName || hasAdmNo || hasAnyData;
-          });
+        const courses = [
+          ...new Set(filtered.map((s) => (s["Course"] || "").trim())),
+        ]
+          .filter(Boolean)
+          .sort((a, b) => a.localeCompare(b));
+        courseBox.innerHTML = "";
+        courses.forEach((c) => {
+          const div = document.createElement("div");
+          div.style.marginBottom = "5px";
+          div.innerHTML = `<label style="display: inline-flex; align-items: flex-start; font-size: 0.9rem; cursor: pointer; text-transform: none; font-weight: 400; color: var(--grey-700);">
+             <input type="checkbox" value="${esc(c)}" checked style="margin-right: 8px; margin-top: 3px;" onchange="updateCourseSelectionState()"> <span>${esc(c)}</span>
+           </label>`;
+          courseBox.appendChild(div);
+        });
+        courseWrap.style.display = filtered.length > 0 ? "block" : "none";
 
-          this.studentsData = filteredData;
+        updateCourseSelectionState();
+      }
 
-          if (this.studentsData.length === 0) {
-            this.showStatus("No valid student data found in file.", "error");
-            this.setButtonState("previewBtn", true);
-            return;
-          }
+      function toggleAllCourses(check) {
+        document
+          .querySelectorAll('#courseCheckboxes input[type="checkbox"]')
+          .forEach((cb) => (cb.checked = check));
+        updateCourseSelectionState();
+      }
 
-          this.setButtonState("previewBtn", false);
-          this.showStatus(
-            `Successfully loaded ${this.studentsData.length} valid records. Starting TC Number: ${this.startingTCNumber}`,
-            "success",
-          );
+      function updateCourseSelectionState() {
+        const checked = document.querySelectorAll(
+          '#courseCheckboxes input[type="checkbox"]:checked',
+        );
+        const isValid = checked.length > 0;
+        document.getElementById("btnBulkDownload").disabled = !isValid;
+        document.getElementById("btnBulkPreview").disabled = !isValid;
+      }
+
+      function getStudentsForYear(year) {
+        return students.filter((s) => (s["I"] || "").trim() === year);
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   SEARCH (shared)
+═══════════════════════════════════════════════════════════ */
+      function admOf(s) {
+        return String(s["Adm. No."] || "").trim();
+      }
+
+      function findStudent(query) {
+        const q = query.trim().toLowerCase();
+        return students.find((s) => admOf(s).toLowerCase() === q);
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   INDIVIDUAL APPLICATION
+═══════════════════════════════════════════════════════════ */
+      function searchStudent() {
+        const query = document.getElementById("admNoInput").value.trim();
+        const errEl = document.getElementById("searchError");
+        errEl.className = "alert";
+
+        if (!query) {
+          showAlert(errEl, "alert-error", "Please enter an Admission Number.");
+          return;
         }
 
-        // Data Preview
-        previewData() {
-          if (this.studentsData.length === 0) {
-            this.showStatus("No data to preview.", "error");
-            return;
-          }
+        const found = findStudent(query);
+        if (!found) {
+          hideStudentCard();
+          showAlert(errEl, "alert-error", `No student found with Admission No. "${query}".`);
+          return;
+        }
 
-          this.collegeName = document
-            .getElementById("collegeName")
-            .value.trim();
+        currentStudent = found;
+        displayStudentCard(found);
+      }
 
-          if (!this.collegeName) {
-            this.showStatus("Please fill in college name.", "error");
-            return;
-          }
+      function displayStudentCard(s) {
+        document.getElementById("cardName").textContent = (
+          s["Student Name"] || ""
+        ).trim();
+        document.getElementById("cardMeta").innerHTML = `
+    <span><span class="meta-label">Adm. No.</span> ${esc(s["Adm. No."])}</span>
+    <span><span class="meta-label">Course</span> ${esc(s["Course"])}</span>
+    <span><span class="meta-label">DOB</span> ${esc(parseDate(s["D.O.B."]))}</span>
+    <span><span class="meta-label">Year I</span> ${esc(s["I"])}</span>
+    <span><span class="meta-label">Category</span> ${esc(s["Category"])}</span>
+    <span><span class="meta-label">Status</span> ${esc(s["Course Status"])}</span>
+  `;
+        document.getElementById("studentCard").classList.add("visible");
+      }
 
-          if (!this.startingTCNumber) {
-            this.showStatus(
-              "Starting TC Number not found in CSV. Please add it to cell B1.",
-              "error",
-            );
-            return;
-          }
+      function hideStudentCard() {
+        document.getElementById("studentCard").classList.remove("visible");
+        currentStudent = null;
+      }
 
+      function downloadSingle() {
+        if (!currentStudent) return;
+        const formType = document.getElementById("singleFormType").value;
+        if (formType === "cd" && !isEligibleForCD(currentStudent)) {
+          alert("Caution Deposit Refund generation is restricted to FEES, OBC, and GENERAL categories only.");
+          return;
+        }
+        const btn = document.getElementById("btnDownloadSingle");
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Generating…';
+        setTimeout(() => {
           try {
-            this.displayPreview();
-            this.setButtonState("generateBtn", false);
-            this.setButtonState("downloadExcelBtn", false);
-            this.showStatus("Data preview generated successfully!", "success");
-          } catch (error) {
-            this.showStatus(
-              "Error generating preview: " + error.message,
-              "error",
-            );
+            const doc = generatePDF(currentStudent, null, formType);
+            const name = sanitizeName(currentStudent["Student Name"] || "Student");
+            const adm = currentStudent["Adm. No."] || "";
+            doc.save(`Application_${adm}_${name}.pdf`);
+          } catch (e) {
+            alert("Error generating PDF: " + e.message);
           }
+          btn.disabled = false;
+          btn.innerHTML = "<span>⬇️</span> Download PDF";
+        }, 50);
+      }
+
+      function previewSingle() {
+        if (!currentStudent) return;
+        const formType = document.getElementById("singleFormType").value;
+        if (formType === "cd" && !isEligibleForCD(currentStudent)) {
+          alert("Caution Deposit Refund generation is restricted to FEES, OBC, and GENERAL categories only.");
+          return;
+        }
+        const btn = document.getElementById("btnPreviewSingle");
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Generating…';
+        setTimeout(() => {
+          try {
+            const doc = generatePDF(currentStudent, null, formType);
+            window.open(doc.output("bloburl"), "_blank");
+          } catch (e) {
+            alert("Error generating PDF: " + e.message);
+          }
+          btn.disabled = false;
+          btn.innerHTML = "<span>👁️</span> Preview PDF";
+        }, 50);
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   BULK APPLICATION DOWNLOAD
+═══════════════════════════════════════════════════════════ */
+      async function processBulk(preview = false, actionBtnId) {
+        const year = document.getElementById("yearSelect").value;
+        if (!year) return;
+
+        const filtered = getStudentsForYear(year).sort((a, b) => {
+          const cA = (a["Course"] || "").trim().toLowerCase();
+          const cB = (b["Course"] || "").trim().toLowerCase();
+          return cA.localeCompare(cB);
+        });
+        if (filtered.length === 0) return;
+
+        const btn = document.getElementById(actionBtnId);
+        const originalText = btn.innerHTML;
+        const prog = document.getElementById("progressWrap");
+        const fill = document.getElementById("progressFill");
+        const label = document.getElementById("progressLabel");
+        const progText = document.getElementById("progressText");
+        const bulkAlert = document.getElementById("bulkAlert");
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Working…';
+        prog.classList.add("visible");
+        bulkAlert.className = "alert";
+        fill.style.width = "0%";
+
+        const { jsPDF } = window.jspdf;
+        const formType = document.getElementById("bulkFormType").value;
+        const checkedBoxes = Array.from(
+          document.querySelectorAll('#courseCheckboxes input[type="checkbox"]:checked'),
+        ).map((cb) => cb.value);
+        const processingStudents = filtered.filter((s) =>
+          checkedBoxes.includes((s["Course"] || "Unknown").trim()),
+        );
+
+        if (processingStudents.length === 0) {
+          prog.classList.remove("visible");
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+          showAlert(bulkAlert, "alert-warning", "No courses selected. Please select at least one course.");
+          return;
         }
 
-        displayPreview() {
-          const previewSection = document.getElementById("previewSection");
-          const dataPreview = document.getElementById("dataPreview");
-          const recordCount = document.getElementById("recordCount");
+        const grouped = {};
+        for (const s of processingStudents) {
+          const course = sanitizeName((s["Course"] || "Unknown").trim());
+          if (!grouped[course]) grouped[course] = [];
+          grouped[course].push(s);
+        }
 
-          if (this.studentsData.length === 0) {
-            dataPreview.innerHTML = "<p>No data available</p>";
-            recordCount.innerHTML = "No records found";
-            previewSection.style.display = "block";
-            return;
+        let mergedPreviewDoc = null;
+        let isFirstMergedPage = true;
+        let zip = null;
+        let folder = null;
+
+        if (preview) {
+          mergedPreviewDoc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+        } else {
+          zip = new JSZip();
+          folder = zip.folder(`Applications_${year.replace("-", "_")}`);
+        }
+
+        const courses = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+        let totalProcessed = 0;
+
+        for (const course of courses) {
+          let courseDoc = null;
+          let isFirstCoursePage = true;
+          let hasPages = false;
+
+          if (!preview) {
+            courseDoc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
           }
 
-          const firstRow = this.studentsData[0];
-          const columnNames = Object.keys(firstRow);
+          for (const s of grouped[course]) {
+            const eligibleForCD = isEligibleForCD(s);
+            const shouldGenTC = formType === "tc" || formType === "both";
+            const shouldGenCD = (formType === "cd" || formType === "both") && eligibleForCD;
 
-          recordCount.innerHTML = `Found ${this.studentsData.length} records with ${columnNames.length} columns`;
+            if (!shouldGenTC && !shouldGenCD) continue;
+            hasPages = true;
 
-          let html = '<table class="data-table">';
+            try {
+              const targetDoc = preview ? mergedPreviewDoc : courseDoc;
+              const nextPage = () => {
+                if (preview) {
+                  if (!isFirstMergedPage) targetDoc.addPage();
+                  isFirstMergedPage = false;
+                } else {
+                  if (!isFirstCoursePage) targetDoc.addPage();
+                  isFirstCoursePage = false;
+                }
+              };
 
-          // Header
-          html += "<thead><tr><th>S.No</th><th>TC No</th>";
-          columnNames.forEach((col) => (html += `<th>${col}</th>`));
-          html += "</tr></thead><tbody>";
-
-          // Data rows
-          this.studentsData.forEach((student, index) => {
-            const tcNo = this.incrementTCNumber(this.startingTCNumber, index);
-            html += `<tr><td>${index + 1}</td><td>${tcNo}</td>`;
-            columnNames.forEach((col) => {
-              const value = student[col];
-              const displayValue =
-                value !== null && value !== undefined && value !== ""
-                  ? value
-                  : "N/A";
-              html += `<td>${displayValue}</td>`;
-            });
-            html += "</tr>";
-          });
-
-          html += "</tbody></table>";
-          dataPreview.innerHTML = html;
-          previewSection.style.display = "block";
-        }
-
-        // TC Generation
-        generateAllTCs() {
-          if (this.studentsData.length === 0) {
-            this.showStatus("No data available for generation.", "error");
-            return;
-          }
-
-          const tcContainer = document.getElementById("tcContainer");
-          const progressBar = document.getElementById("progressBar");
-          const progressFill = document.getElementById("progressFill");
-
-          progressBar.style.display = "block";
-          tcContainer.innerHTML = "";
-
-          let html = "";
-
-          for (let index = 0; index < this.studentsData.length; index++) {
-            const student = this.studentsData[index];
-            const tcNo = this.incrementTCNumber(this.startingTCNumber, index);
-            const dobWords = this.dateToWords(student["Date of Birth"] || "");
-            // Get issue date from CSV
-            const issueDateRaw = student['issue date'] || student['Issue date'] || student['Issue Date'] || student['ISSUE DATE'] || this.getTodayDate();
-            const issueDate = this.standardizeDateFormat(issueDateRaw);
-            const progress = ((index + 1) / this.studentsData.length) * 100;
-            progressFill.style.width = progress + "%";
-
-            html += this.generateTCPage(student, tcNo, dobWords, issueDate);
-          }
-
-          tcContainer.innerHTML = html;
-          progressBar.style.display = "none";
-          this.showTCContainer();
-          this.showStatus(
-            `Generated ${this.studentsData.length} Transfer Certificates successfully!`,
-            "success",
-          );
-        }
-
-        generateTCPage(student, tcNo, dobWords, issueDate) {
-          const standardizedDob = this.standardizeDateFormat(
-            student["Date of Birth"] || "",
-          );
-          const tcHTML = `
-                    <div class="certificate">
-                        <div class="content-wrapper">
-                            <h1 class="certificate-title">Transfer Certificate</h1>
-
-                            <div style="text-align: center; margin-bottom: 15px; font-weight: bold; font-size: 14px;">
-                                ${this.collegeName}
-                            </div>
-
-                            <div class="header-info">
-                                <div>Number: <span style="font-weight: bold;">${tcNo}</span> <span style="float: right;">Date: <span style="font-weight: bold;">${issueDate}</span></span></div>
-                            </div>
-
-                            <table class="certificate-table">
-                                ${this.generateTableRows(student, standardizedDob, dobWords, issueDate)}
-                            </table>
-                        </div>
-                    </div>`;
-
-          return `<div class="tc-page">${tcHTML}${tcHTML}</div>`;
-        }
-
-        createTCHTML(student, tcNo, dobWords, todayDate, standardizedDob) {
-          return `
-                    <div class="certificate">
-                        <div class="content-wrapper">
-                            <h1 class="certificate-title">Transfer Certificate</h1>
-
-                            <div class="header-info">
-                                <div style="text-align: center; margin-bottom: 15px;">${this.collegeName}</div>
-                                <div>Number: ${tcNo}<span style="float: right;">Date: ${todayDate}</span></div>
-                            </div>
-
-                            <table class="certificate-table">
-                                ${this.generateTableRows(student, standardizedDob, dobWords, todayDate)}
-                            </table>
-                        </div>
-                    </div>`;
-        }
-
-        generateTableRows(student, standardizedDob, dobWords, issueDate) {
-          const rows = [
-            {
-              num: 1,
-              label: "Name of student :",
-              value: student["Name"] || "",
-              colspan: true,
-            },
-            {
-              num: 2,
-              label: "Date of birth as entered in<br>Admission Register :",
-              value: `<span style="font-weight: bold;">${standardizedDob}</span> <span style="font-weight: normal;">(${dobWords})</span>`,
-              colspan: true,
-            },
-            {
-              num: 3,
-              label: "Number in Admission Register :",
-              value: student["Adm No"] || "",
-              colspan: true,
-            },
-            {
-              num: 4,
-              label1: "Admitted on :",
-              value1: student["Admitted on"] || "",
-              label2: "into class :",
-              value2: student["into class"] || "",
-            },
-            {
-              num: 5,
-              label1: "Left on :",
-              value1: student["Left on"] || "",
-              label2: "from class :",
-              value2: student["from class"] || "",
-              spacing: true,
-            },
-            {
-              num: 6,
-              label: "Subjects or portions studied :",
-              value: student["Subject"] || "",
-              colspan: true,
-              spacing: true,
-            },
-            {
-              num: 7,
-              label: "Whether qualified for promotion to a<br>higher class :",
-              value: student["Course Status"] || student["Course status"] || "",
-              colspan: true,
-              spacing: true,
-            },
-            {
-              num: 8,
-              label:
-                "Whether all dues to the college have been<br>discharged :",
-              value: "YES",
-              colspan: true,
-            },
-            {
-              num: 9,
-              label:
-                "Whether the student was in receipt of any<br>scholarship or concession :<br>(Nature to be specified)",
-              value: student["Cetegory"] || "",
-              colspan: true,
-            },
-            {
-              num: 10,
-              label: this.getExaminationLabel(),
-              value: this.getExaminationValue(),
-              colspan: true,
-            },
-            {
-              num: 11,
-              label:
-                "The date on which the student actually left<br>the college :",
-              value: student["Left on"] || "",
-              colspan: true,
-            },
-            {
-              num: 12,
-              label: "Date of application for Transfer Certificate :",
-              value: student["Application Date"] || "",
-              colspan: true,
-            },
-            {
-              num: 13,
-              label: "Date of issue of the Transfer Certificate :",
-              value: issueDate,
-              colspan: true,
-              spacing: true,
-            },
-            {
-              num: 14,
-              label: "Character and Conduct :",
-              value: "",
-              colspan: true,
-              spacing: true,
-            },
-            {
-              num: 15,
-              label: "Signature of the Principal :",
-              value: "",
-              colspan: true,
-              spacing: true,
-            },
-            {
-              num: 16,
-              label: "College Seal :",
-              value: "",
-              colspan: true,
-              spacing: true,
-            },
-          ];
-
-          return rows
-            .map((row) => {
-              const lineSpacing = row.spacing
-                ? "line-height: 1.5; padding: 3px 4px;"
-                : "";
-              if (row.colspan) {
-                return `<tr>
-                            <td class="serial-col" style="${lineSpacing}">${row.num}.</td>
-                            <td class="label-col" colspan="2" style="${lineSpacing}">${row.label}</td>
-                            <td class="data-col" colspan="2" style="${lineSpacing}">${row.value}</td>
-                        </tr>`;
-              } else {
-                return `<tr>
-                            <td class="serial-col" style="${lineSpacing}">${row.num}.</td>
-                            <td class="label-col" style="width: 25%; ${lineSpacing}">${row.label1}</td>
-                            <td class="data-col" style="width: 18%; font-weight: bold; ${lineSpacing}">${row.value1}</td>
-                            <td class="label-col" style="width: 18%; ${lineSpacing}">${row.label2}</td>
-                            <td class="data-col" style="width: 18%; font-weight: bold; ${lineSpacing}">${row.value2}</td>
-                        </tr>`;
+              if (shouldGenTC) {
+                nextPage();
+                generateTCPDFPage(s, targetDoc);
               }
+              if (shouldGenCD) {
+                nextPage();
+                generateCDPDFPage(s, targetDoc);
+              }
+            } catch (e) {
+              console.warn("PDF error", e);
+            }
+
+            totalProcessed++;
+            const pct = Math.round((totalProcessed / processingStudents.length) * 100);
+            fill.style.width = pct + "%";
+            label.textContent = `${totalProcessed} / ${processingStudents.length}`;
+            progText.textContent = `Processing: ${course}`;
+
+            if (totalProcessed % 5 === 0) await new Promise((r) => setTimeout(r, 0));
+          }
+
+          if (!preview && hasPages) {
+            folder.file(`${course}.pdf`, courseDoc.output("arraybuffer"));
+          }
+        }
+
+        progText.textContent = preview ? "Opening Preview…" : "Compressing ZIP…";
+        if (preview) {
+          window.open(mergedPreviewDoc.output("bloburl"), "_blank");
+        } else {
+          const blob = await zip.generateAsync({ type: "blob" });
+          saveAs(blob, `Coursewise_Applications_${year.replace("-", "_")}.zip`);
+        }
+
+        prog.classList.remove("visible");
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        if (!preview) {
+          showAlert(bulkAlert, "alert-success", `✅ Generated Course-wise ZIP containing ${totalProcessed} requested forms.`);
+        }
+      }
+
+      function downloadBulk() {
+        processBulk(false, "btnBulkDownload");
+      }
+
+      function previewBulk() {
+        processBulk(true, "btnBulkPreview");
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   APPLICATION PDF GENERATION (jsPDF)
+═══════════════════════════════════════════════════════════ */
+      function isEligibleForCD(student) {
+        const cat = (student["Category"] || "").trim().toUpperCase();
+        if (cat.includes("OBC(H)")) return false;
+        return cat.includes("FEES") || cat.includes("OBC") || cat.includes("GENERAL") || cat.includes("GEN");
+      }
+
+      function generatePDF(student, doc = null, type = "tc") {
+        if (!doc) {
+          const { jsPDF } = window.jspdf;
+          doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+        }
+
+        const eligibleForCD = isEligibleForCD(student);
+        const shouldGenTC = type === "tc" || type === "both";
+        const shouldGenCD = (type === "cd" || type === "both") && eligibleForCD;
+
+        let isFirstPage = true;
+        if (shouldGenTC) {
+          generateTCPDFPage(student, doc);
+          isFirstPage = false;
+        }
+        if (shouldGenCD) {
+          if (!isFirstPage) doc.addPage();
+          generateCDPDFPage(student, doc);
+        }
+        return doc;
+      }
+
+      function generateTCPDFPage(student, doc) {
+        const W = 210,
+          ml = 15,
+          mr = 15,
+          cw = W - ml - mr;
+
+        // ── TC Number / Date top-right ──
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text(
+          "TC Number: ..............................   TC Date: ..............................",
+          W - mr,
+          16,
+          { align: "right" },
+        );
+
+        // ── Title ──
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        const title = "APPLICATION FOR TRANSFER CERTIFICATE & CONDUCT CERTIFICATE";
+        const titleW = doc.getTextWidth(title);
+        doc.text(title, W / 2, 27, { align: "center" });
+        doc.setLineWidth(0.4);
+        doc.line(W / 2 - titleW / 2, 28.5, W / 2 + titleW / 2, 28.5);
+
+        // ── Main Application Table ──
+        const yearOfStudy = getYearOfStudy(student);
+        const courseCompleted = (student["Course Status"] || "").trim() === "Course Completed";
+        const leftOn = parseDate(student["Left on"] || "");
+        const completionStatus = courseCompleted ? "Yes" : "No\n" + leftOn;
+
+        doc.autoTable({
+          startY: 32,
+          margin: { left: ml, right: mr },
+          body: [
+            ["1.", "Name (In block letters)", (student["Student Name"] || "").trim()],
+            ["2.", "Class and subject", (student["Course"] || "").trim()],
+            ["3.", "Date of Birth", parseDate(student["D.O.B."] || "")],
+            ["4.", "No. in the Admission Register", String(student["Adm. No."] || "")],
+            ["5.", "Period of study", yearOfStudy],
+            [
+              "6.",
+              "Whether the course completed\nIf not, specify the last date of attendance.",
+              completionStatus,
+            ],
+            [
+              "7.",
+              "Whether the student was in receipt of any scholarship / concession (Nature to be specified clearly)",
+              (student["Category"] || "").trim(),
+            ],
+          ],
+          columnStyles: {
+            0: { cellWidth: 12, halign: "center", valign: "middle", fontStyle: "normal" },
+            1: { cellWidth: 87, valign: "middle" },
+            2: { cellWidth: 81, valign: "middle" },
+          },
+          styles: {
+            fontSize: 10,
+            cellPadding: { top: 1.75, right: 2, bottom: 1.75, left: 2 },
+            lineColor: [0, 0, 0],
+            lineWidth: 0.3,
+            textColor: [30, 30, 30],
+          },
+          theme: "grid",
+          didParseCell: (data) => {
+            if (data.row.index === 0 && data.column.index === 2) {
+              data.cell.styles.fontStyle = "bold";
+            }
+            if (data.column.index === 0) {
+              data.cell.styles.fontStyle = "normal";
+            }
+          },
+        });
+
+        let y = doc.lastAutoTable.finalY + 24;
+
+        // ── Date and Signature ──
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Date: " + getTodayStr(), ml, y);
+        doc.text("Signature of the Applicant", W - mr, y, { align: "right" });
+
+        y += 14;
+
+        // ── CERTIFICATE ──
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.text("CERTIFICATE", W / 2, y, { align: "center" });
+
+        y += 7;
+
+        const sex = (student["Sex"] || "").trim().toUpperCase();
+        const salutation = sex === "M" ? "Sri." : "Kum.";
+        const possessivePronoun = sex === "M" ? "his" : "her";
+        const studentName = (student["Student Name"] || "").trim();
+        const courseName = (student["Course"] || "").trim();
+
+        const col1 = (student["I"] || "").trim();
+        const col2 = (student["II"] || "").trim();
+        const col3 = (student["III"] || "").trim();
+        const startPeriod = col1;
+        const endPeriod = col3 ? col3 : col2 ? col2 : col1;
+
+        let completionLine = "";
+        if (sex === "M") {
+          completionLine = courseCompleted
+            ? `He has completed the course.`
+            : `He has discontinued the course, and his last attendance date was ${leftOn}.`;
+        } else {
+          completionLine = courseCompleted
+            ? `She has completed the course.`
+            : `She has discontinued the course, and her last attendance date was ${leftOn}.`;
+        }
+
+        const parts = [
+          { text: "Certified that ", bold: false },
+          { text: `${salutation} `, bold: false },
+          { text: `${studentName}`, bold: true },
+          { text: ` was a regular student for `, bold: false },
+          { text: `${courseName}`, bold: true },
+          { text: ` for the academic period from ${startPeriod} to ${endPeriod}.\n`, bold: false },
+          {
+            text: `${completionLine}\nAlso certified that ${possessivePronoun} Character and conduct during the period were .............`,
+            bold: false,
+          },
+        ];
+
+        doc.setFontSize(10);
+        y = printWrappedRichText(doc, parts, ml, y, cw, 5.5);
+
+        y += 10;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Date:", ml, y);
+        doc.text("Name and Signature of Tutor/H.O.D.", W - mr, y, { align: "right" });
+
+        y += 28;
+
+        // ── VERIFICATION OF DUES ──
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.text("VERIFICATION OF DUES", W / 2, y, { align: "center" });
+
+        doc.autoTable({
+          startY: y + 4,
+          margin: { left: ml, right: mr },
+          body: [
+            ["1.", "Fees", ""],
+            ["2.", "Details of fee concessions sanctioned\n(Order No. And duration of period)", ""],
+            ["3.", "Department", ""],
+            ["4.", "Library", ""],
+            ["5.", "NSS", ""],
+            ["6.", "Department of Physical Education", ""],
+          ],
+          columnStyles: {
+            0: { cellWidth: 12, halign: "center", valign: "middle" },
+            1: { cellWidth: 87, valign: "middle" },
+            2: { cellWidth: 81, valign: "middle", minCellHeight: 10 },
+          },
+          styles: {
+            fontSize: 10,
+            cellPadding: { top: 1.75, right: 2, bottom: 1.75, left: 2 },
+            lineColor: [0, 0, 0],
+            lineWidth: 0.3,
+            textColor: [30, 30, 30],
+            minCellHeight: 9,
+          },
+          theme: "grid",
+        });
+
+        y = doc.lastAutoTable.finalY + 12;
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.text("Orders of the Principal", ml, y);
+      }
+
+      function generateCDPDFPage(student, doc) {
+        const W = 210, ml = 15, mr = 15;
+
+        // ── Title ──
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        const title = "FORM OF APPLICATION FOR REFUND OF CAUTION DEPOSIT";
+        doc.text(title, W / 2, 27, { align: "center" });
+        const titleW = doc.getTextWidth(title);
+        doc.setLineWidth(0.4);
+        doc.line(W / 2 - titleW / 2, 28.5, W / 2 + titleW / 2, 28.5);
+
+        // ── Main Form Table ──
+        const yearOfStudy = getYearOfStudy(student);
+        const courseStr = (student["Course"] || "").trim().toUpperCase();
+        let refundAmt = "";
+        if (courseStr.startsWith("B")) {
+          refundAmt = "360";
+        } else if (courseStr.startsWith("M")) {
+          refundAmt = "600";
+        }
+
+        doc.autoTable({
+          startY: 38,
+          margin: { left: ml, right: mr },
+          body: [
+            ["1.", "Name (in block letters)", (student["Student Name"] || "").trim()],
+            ["2.", "Class and Subject", (student["Course"] || "").trim()],
+            ["3.", "Admission No", String(student["Adm. No."] || "")],
+            ["4.", "Period of Study (In this College)", yearOfStudy],
+            ["5.", "Amount of Caution Deposit to be refunded", refundAmt],
+            ["6.", "No. and date of receipt in token of having made the deposit", ""],
+            ["7.", "T.C No. & Date", ""],
+            ["8.", "Address (Permanent home address)", ""],
+            ["9.", "Whether Identity Card Collected?", "Yes / No"],
+          ],
+          columnStyles: {
+            0: { cellWidth: 10, halign: "center", valign: "middle", fontStyle: "normal" },
+            1: { cellWidth: 85, valign: "middle" },
+            2: { cellWidth: 85, valign: "middle" },
+          },
+          styles: {
+            fontSize: 10,
+            cellPadding: { top: 3.5, right: 3, bottom: 3.5, left: 3 },
+            lineColor: [0, 0, 0],
+            lineWidth: 0.3,
+            textColor: [30, 30, 30],
+            minCellHeight: 10,
+          },
+          theme: "grid",
+          didParseCell: (data) => {
+            if (data.row.index === 0 && data.column.index === 2) {
+              data.cell.styles.fontStyle = "bold";
+            }
+            if (data.row.index === 7) {
+              data.cell.styles.minCellHeight = 20;
+            }
+          },
+        });
+
+        let y = doc.lastAutoTable.finalY + 14;
+
+        // ── Bank Details Table ──
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.text("Details Bank Account to which the Caution Deposit is to be credited.", ml, y);
+
+        doc.autoTable({
+          startY: y + 4,
+          margin: { left: ml, right: mr },
+          body: [
+            ["a)", "Name of Bank", ""],
+            ["b)", "Bank Account Number", (student["Account No"] || "").trim()],
+            ["c)", "IFSC", (student["IFSC"] || "").trim()],
+            ["d)", "Mobile No. linked with bank", (student["Mobile No"] || "").trim()],
+          ],
+          columnStyles: {
+            0: { cellWidth: 10, halign: "center", valign: "middle" },
+            1: { cellWidth: 85, valign: "middle" },
+            2: { cellWidth: 85, valign: "middle" },
+          },
+          styles: {
+            fontSize: 10,
+            cellPadding: { top: 3.5, right: 3, bottom: 3.5, left: 3 },
+            lineColor: [0, 0, 0],
+            lineWidth: 0.3,
+            textColor: [30, 30, 30],
+            minCellHeight: 12,
+          },
+          theme: "grid",
+        });
+
+        y = doc.lastAutoTable.finalY + 7;
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(9);
+        doc.text("(Copy of Bank passbook to be attached)", ml, y);
+
+        y += 24;
+
+        // ── Signatures ──
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Date of application:", ml, y);
+        doc.text("Signature of the Candidate", W - mr, y, { align: "right" });
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   ISSUE TC – SEARCH & VERIFY
+═══════════════════════════════════════════════════════════ */
+      // Maps a master-list row to the fields printed on the TC
+      function tcFieldsOf(s) {
+        return {
+          name: (s["Student Name"] || "").trim(),
+          dob: toDMY(s["D.O.B."]),
+          admNo: admOf(s),
+          admittedOn: toDMY(s["Adm. Date"]),
+          intoClass: (s["Admitted to"] || "").trim(),
+          leftOn: toDMY(s["Left on"]),
+          fromClass: (s["Left from"] || "").trim(),
+          subject: (s["Course"] || "").trim(),
+          courseStatus: (s["Course Status"] || "").trim(),
+          category: (s["Category"] || "").trim(),
+        };
+      }
+
+      function searchTCStudent() {
+        const query = document.getElementById("tcAdmNoInput").value.trim();
+        const alertEl = document.getElementById("tcSearchAlert");
+        alertEl.className = "alert";
+
+        if (!query) {
+          showAlert(alertEl, "alert-error", "Please enter an Admission Number.");
+          return;
+        }
+        const found = findStudent(query);
+        if (!found) {
+          hideTCStudentCard();
+          showAlert(alertEl, "alert-error", `No student found with Admission No. "${query}".`);
+          return;
+        }
+        currentTCStudent = found;
+        displayTCStudentCard(found);
+      }
+
+      function displayTCStudentCard(s) {
+        const f = tcFieldsOf(s);
+        const val = (v) => (v ? esc(v) : '<span class="missing">— missing —</span>');
+        const rows = [
+          ["Name of student", val(f.name)],
+          ["Date of birth", f.dob ? `${esc(f.dob)} <span style="font-weight:400;color:var(--grey-400)">(${esc(dateToWords(f.dob))})</span>` : val("")],
+          ["Admission Register No.", val(f.admNo)],
+          ["Admitted on / into class", `${val(f.admittedOn)} &nbsp;/&nbsp; ${val(f.intoClass)}`],
+          ["Left on / from class", `${val(f.leftOn)} &nbsp;/&nbsp; ${val(f.fromClass)}`],
+          ["Subjects studied", val(f.subject)],
+          ["Qualified for promotion", val(f.courseStatus)],
+          ["Scholarship / concession", val(f.category)],
+        ];
+        document.getElementById("tcCardName").textContent = f.name;
+        document.getElementById("tcVerifyTable").innerHTML = rows
+          .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
+          .join("");
+
+        const warnEl = document.getElementById("tcCardWarning");
+        warnEl.className = "alert";
+        const warnings = [];
+        const existingTC = String(s["TC Number"] || "").trim();
+        if (existingTC) warnings.push(`⚠️ TC already issued to this student (TC No. ${existingTC}).`);
+        if (batch.some((b) => b.adm === f.admNo)) warnings.push("⚠️ This student is already in the current batch.");
+        if (!f.leftOn) warnings.push("⚠️ 'Left on' date is missing in the student list.");
+        if (warnings.length) {
+          warnEl.className = "alert alert-warning visible";
+          warnEl.innerHTML = warnings.join("<br>");
+        }
+
+        document.getElementById("tcAppDate").value = "";
+        document.getElementById("tcIssueDate").value = settings.issueDate || todayISO();
+        document.getElementById("tcStudentCard").classList.add("visible");
+        document.getElementById("tcAppDate").focus();
+      }
+
+      function hideTCStudentCard() {
+        document.getElementById("tcStudentCard").classList.remove("visible");
+        currentTCStudent = null;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   ISSUE TC – BATCH
+═══════════════════════════════════════════════════════════ */
+      function addToBatch() {
+        if (!currentTCStudent) return;
+        const alertEl = document.getElementById("tcSearchAlert");
+        const adm = admOf(currentTCStudent);
+        const appDate = document.getElementById("tcAppDate").value;
+        const issueDate = document.getElementById("tcIssueDate").value;
+
+        if (!appDate) {
+          showAlert(alertEl, "alert-error", "Please enter the TC Application Date.");
+          document.getElementById("tcAppDate").focus();
+          return;
+        }
+        if (!issueDate) {
+          showAlert(alertEl, "alert-error", "Please enter the Date of Issue.");
+          return;
+        }
+        if (batch.some((b) => b.adm === adm)) {
+          showAlert(alertEl, "alert-error", `Admission No. ${adm} is already in the batch.`);
+          return;
+        }
+        if (String(currentTCStudent["TC Number"] || "").trim()) {
+          if (!confirm(`A TC (No. ${currentTCStudent["TC Number"]}) was already issued to this student. Add again?`)) return;
+        }
+
+        batch.push({
+          adm,
+          student: { ...currentTCStudent },
+          appDate: toDMY(appDate),
+          issueDate: toDMY(issueDate),
+        });
+        saveStore(STORE_BATCH, batch);
+        renderBatch();
+
+        showAlert(alertEl, "alert-success", `✅ ${currentTCStudent["Student Name"]} added to batch.`);
+        hideTCStudentCard();
+        const input = document.getElementById("tcAdmNoInput");
+        input.value = "";
+        input.focus();
+      }
+
+      function removeFromBatch(index) {
+        batch.splice(index, 1);
+        saveStore(STORE_BATCH, batch);
+        renderBatch();
+      }
+
+      function clearBatch() {
+        if (!batch.length) return;
+        if (!confirm("Remove all students from the current batch?")) return;
+        batch = [];
+        saveStore(STORE_BATCH, batch);
+        renderBatch();
+        closeTCs();
+      }
+
+      function renderBatch() {
+        const body = document.getElementById("batchBody");
+        const hint = document.getElementById("batchHint");
+        document.getElementById("tabBatchCount").textContent = batch.length;
+        document.getElementById("btnGenerateBatch").disabled = batch.length === 0;
+        document.getElementById("btnClearBatch").disabled = batch.length === 0;
+
+        if (!batch.length) {
+          body.innerHTML = '<tr><td colspan="8" class="batch-empty">No students in batch yet. Search a student above and click “Add to Batch”.</td></tr>';
+        } else {
+          body.innerHTML = batch
+            .map((b, i) => {
+              const s = b.student;
+              return `<tr>
+                <td>${i + 1}</td>
+                <td>${settings.nextTC ? `<span class="tc-no-pill">${esc(incrementTCNumber(settings.nextTC, i))}</span>` : "—"}</td>
+                <td>${esc(b.adm)}</td>
+                <td>${esc(s["Student Name"])}</td>
+                <td>${esc(s["Course"])}</td>
+                <td>${esc(b.appDate)}</td>
+                <td>${esc(b.issueDate)}</td>
+                <td><button class="btn btn-outline btn-sm" onclick="removeFromBatch(${i})">✕ Remove</button></td>
+              </tr>`;
             })
             .join("");
         }
 
-        getExaminationLabel() {
-          return `Name of the examination of the—<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;(a) University for which the student has<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;been last presented from the college<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and Reg. No. of the student :<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;(b) Date of examination :<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;(c) Whether the student has appeared for<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the examination, if so,—<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(i) The parts (or division) in which<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;he has passed :<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ii) The parts (or division) in which<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;he has failed :`;
-        }
-
-        getExaminationValue() {
-          return `<div class="exam-section">
-                    <div class="exam-line top"></div>
-                    <div class="exam-line vertical"></div>
-                    <div class="exam-line bottom"></div>
-                </div>`;
-        }
-
-        // UI Controls
-        showTCContainer() {
-          const tcContainer = document.getElementById("tcContainer");
-          tcContainer.style.display = "block";
-
-          const controls = this.createControls();
-          tcContainer.insertBefore(controls, tcContainer.firstChild);
-        }
-
-        downloadTCSummaryExcel() {
-          if (this.studentsData.length === 0) {
-            this.showStatus("No data available for Excel generation.", "error");
-            return;
-          }
-
-          try {
-            // Create workbook and worksheet
-            const wb = XLSX.utils.book_new();
-
-            // Prepare data for Excel
-            const excelData = this.studentsData.map((student, index) => {
-              const tcNo = this.incrementTCNumber(this.startingTCNumber, index);
-              // Get issue date from CSV
-              const issueDateRaw = student["Issue Date"] || this.getTodayDate();
-              const issueDate = this.standardizeDateFormat(issueDateRaw);
-              return {
-                "S.No": index + 1,
-                "Admission No": student["Adm No"] || "N/A",
-                Name: student["Name"] || "N/A",
-                "TC Number": tcNo,
-                "Date of Issue": issueDate,
-              };
-            });
-
-            // Create worksheet from data
-            const ws = XLSX.utils.json_to_sheet(excelData);
-
-            // Set column widths for better formatting
-            ws["!cols"] = [
-              { wch: 8 }, // S.No
-              { wch: 15 }, // Admission No
-              { wch: 25 }, // Name
-              { wch: 15 }, // TC Number
-              { wch: 12 }, // Date of Issue
-            ];
-
-            // Add worksheet to workbook
-            XLSX.utils.book_append_sheet(wb, ws, "TC Summary");
-
-            // Generate filename with timestamp
-            const timestamp = new Date().toISOString().slice(0, 10);
-            const filename = `TC_Summary_${timestamp}.xlsx`;
-
-            // Save file
-            XLSX.writeFile(wb, filename);
-
-            this.showStatus(
-              `Excel file "${filename}" downloaded successfully!`,
-              "success",
-            );
-          } catch (error) {
-            console.error("Excel generation error:", error);
-            this.showStatus(
-              "Error generating Excel file: " + error.message,
-              "error",
-            );
-          }
-        }
-
-        downloadCSVTemplate() {
-          try {
-            // Create template data structure
-            // Row 1: TC Number in cell B1, rest empty
-            const row1 = [
-              "TC No",
-              "25/2025",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-            ];
-
-            // Row 2: Headers
-            const headers = [
-              "Adm No",
-              "Name",
-              "Date of Birth",
-              "Admitted on",
-              "into class",
-              "Left on",
-              "from class",
-              "Subject",
-              "Application Date",
-              "Issue Date",
-              "Cetegory",
-              "Course Status",
-            ];
-
-            // Row 3: Sample data
-            const sampleData = [
-              "12345",
-              "John Doe",
-              "20/01/2004",
-              "25/06/2022",
-              "I Sem",
-              "31/03/2025",
-              "VI Sem",
-              "BA English",
-              "15/04/2025",
-              "20/04/2025",
-              "OBC",
-              "Course Completed",
-            ];
-
-            // Combine all rows
-            const csvContent = [row1, headers, sampleData];
-
-            // Convert to CSV string
-            const csvString = csvContent.map((row) => row.join(",")).join("\n");
-
-            // Create blob and download
-            const blob = new Blob([csvString], {
-              type: "text/csv;charset=utf-8;",
-            });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-
-            link.setAttribute("href", url);
-            link.setAttribute("download", "TC_Template.csv");
-            link.style.visibility = "hidden";
-
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            this.showStatus("CSV template downloaded successfully!", "success");
-          } catch (error) {
-            console.error("Template download error:", error);
-            this.showStatus(
-              "Error downloading template: " + error.message,
-              "error",
-            );
-          }
-        }
-
-        createControls() {
-          const controls = document.createElement("div");
-          controls.className = "controls";
-          controls.innerHTML = `
-                    <h4>Transfer Certificates Generated</h4>
-                    <button class="btn" onclick="tcGenerator.downloadPDF()">📥 Download PDF</button>
-                    <button class="btn" onclick="tcGenerator.closeTCs()">❌ Close Preview</button>
-                    <p style="margin-top: 10px; font-size: 14px; opacity: 0.9;">Scroll down to view all certificates</p>
-                `;
-          return controls;
-        }
-
-        async downloadPDF() {
-          try {
-            this.showStatus("Generating PDF... Please wait.", "info");
-
-            const controls = document.querySelector(".controls");
-            if (controls) controls.style.display = "none";
-
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({
-              orientation: "landscape",
-              unit: "mm",
-              format: "a4",
-            });
-
-            const pages = document.querySelectorAll(".tc-page");
-
-            for (let i = 0; i < pages.length; i++) {
-              if (i > 0) pdf.addPage();
-
-              const progress = ((i + 1) / pages.length) * 100;
-              this.showStatus(
-                `Generating PDF... ${Math.round(progress)}%`,
-                "info",
-              );
-
-              try {
-                const canvas = await html2canvas(pages[i], {
-                  scale: 2,
-                  useCORS: true,
-                  allowTaint: true,
-                  backgroundColor: "#ffffff",
-                  width: pages[i].scrollWidth,
-                  height: pages[i].scrollHeight,
-                });
-
-                const imgData = canvas.toDataURL("image/png");
-                const imgWidth = 297;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-                pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-              } catch (pageError) {
-                console.error(`Error processing page ${i + 1}:`, pageError);
-              }
-            }
-
-            const timestamp = new Date()
-              .toISOString()
-              .slice(0, 19)
-              .replace(/[:]/g, "-");
-            const filename = `Transfer_Certificates_${timestamp}.pdf`;
-
-            pdf.save(filename);
-            this.showStatus(
-              `PDF downloaded successfully as ${filename}!`,
-              "success",
-            );
-
-            if (controls) controls.style.display = "block";
-          } catch (error) {
-            console.error("PDF generation error:", error);
-            this.showStatus("Error generating PDF: " + error.message, "error");
-
-            const controls = document.querySelector(".controls");
-            if (controls) controls.style.display = "block";
-          }
-        }
-
-        closeTCs() {
-          document.getElementById("tcContainer").style.display = "none";
-        }
-
-        // Utility Methods
-        showStatus(message, type) {
-          const statusDiv = document.getElementById("status");
-          statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
-          setTimeout(() => (statusDiv.innerHTML = ""), 5000);
-        }
-
-        setButtonState(buttonId, disabled) {
-          document.getElementById(buttonId).disabled = disabled;
-        }
+        hint.innerHTML = settings.nextTC
+          ? `TC numbers are assigned in batch order starting from <strong>${esc(settings.nextTC)}</strong> (change in Settings).`
+          : `<span style="color:var(--error)">Set the Next TC Number in the Settings tab before generating.</span>`;
       }
 
-      // Initialize the application
-      const tcGenerator = new TCGenerator();
+      function generateBatch() {
+        const alertEl = document.getElementById("batchAlert");
+        alertEl.className = "alert";
+        if (!batch.length) return;
+        if (!isValidTCNumber(settings.nextTC)) {
+          showAlert(alertEl, "alert-error", "Next TC Number is not set or invalid (expected e.g. 32/2025). Please update it in Settings.");
+          return;
+        }
+        if (!settings.collegeName.trim()) {
+          showAlert(alertEl, "alert-error", "College name is empty. Please set it in Settings.");
+          return;
+        }
+
+        const tcContainer = document.getElementById("tcContainer");
+        const pages = batch
+          .map((b, i) => generateTCPage(b, incrementTCNumber(settings.nextTC, i)))
+          .join("");
+        const lastTC = incrementTCNumber(settings.nextTC, batch.length - 1);
+
+        tcContainer.innerHTML = `
+          <div class="tc-controls">
+            <h4>${batch.length} Transfer Certificate(s) · ${esc(settings.nextTC)} to ${esc(lastTC)}</h4>
+            <button class="btn btn-gold" id="btnTCPdf" onclick="downloadTCPDF()">📥 Download PDF</button>
+            <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+            <button class="btn btn-outline" onclick="downloadTCSummaryExcel()">📊 Summary Excel</button>
+            <button class="btn btn-primary" onclick="finalizeBatch()">✅ Finalize Batch</button>
+            <button class="btn btn-outline" onclick="closeTCs()">✕ Close</button>
+          </div>
+          <div id="tcPages">${pages}</div>`;
+        tcContainer.style.display = "block";
+        tcContainer.scrollIntoView({ behavior: "smooth" });
+        showAlert(alertEl, "alert-success", "Certificates generated below. Download/print them, then click “Finalize Batch” to record the TC numbers.");
+      }
+
+      function closeTCs() {
+        const c = document.getElementById("tcContainer");
+        c.style.display = "none";
+        c.innerHTML = "";
+      }
+
+      function finalizeBatch() {
+        if (!batch.length) return;
+        const lastTC = incrementTCNumber(settings.nextTC, batch.length - 1);
+        const newNext = incrementTCNumber(settings.nextTC, batch.length);
+        if (!confirm(`Record TC numbers ${settings.nextTC} to ${lastTC} for ${batch.length} student(s)?\n\nNext TC Number will become ${newNext} and the batch will be cleared.`)) return;
+
+        batch.forEach((b, i) => {
+          const tc = incrementTCNumber(settings.nextTC, i);
+          issued[b.adm] = { tc, date: b.issueDate };
+          students.filter((s) => admOf(s) === b.adm).forEach((s) => (s["TC Number"] = tc));
+        });
+        settings.nextTC = newNext;
+        batch = [];
+        saveStore(STORE_ISSUED, issued);
+        saveStore(STORE_SETTINGS, settings);
+        saveStore(STORE_BATCH, batch);
+        renderBatch();
+        closeTCs();
+        showAlert(
+          document.getElementById("batchAlert"),
+          "alert-success",
+          `✅ Batch finalized. Next TC Number is now ${newNext}. Use “Download Updated List” to save the TC numbers into your student list.`,
+        );
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   TC CERTIFICATE HTML (layout from TC.html)
+═══════════════════════════════════════════════════════════ */
+      function generateTCPage(item, tcNo) {
+        const f = tcFieldsOf(item.student);
+        const certificate = `
+          <div class="certificate">
+            <div class="content-wrapper">
+              <h1 class="certificate-title">Transfer Certificate</h1>
+              <div style="text-align: center; margin-bottom: 15px; font-weight: bold; font-size: 14px;">
+                ${esc(settings.collegeName)}
+              </div>
+              <div class="header-info">
+                <div>Number: <span style="font-weight: bold;">${esc(tcNo)}</span> <span style="float: right;">Date: <span style="font-weight: bold;">${esc(item.issueDate)}</span></span></div>
+              </div>
+              <table class="certificate-table">
+                <colgroup>
+                  <col style="width: 22px" /><col style="width: 120px" /><col style="width: 102px" /><col style="width: 78px" /><col />
+                </colgroup>
+                ${generateTableRows(f, item.appDate, item.issueDate)}
+              </table>
+            </div>
+          </div>`;
+        return `<div class="tc-page">${certificate}${certificate}</div>`;
+      }
+
+      function generateTableRows(f, appDate, issueDate) {
+        const rows = [
+          { num: 1, label: "Name of student :", value: esc(f.name), colspan: true },
+          {
+            num: 2,
+            label: "Date of birth as entered in<br>Admission Register :",
+            value: `<span style="font-weight: bold;">${esc(f.dob)}</span> <span style="font-weight: normal;">(${esc(dateToWords(f.dob))})</span>`,
+            colspan: true,
+          },
+          { num: 3, label: "Number in Admission Register :", value: esc(f.admNo), colspan: true },
+          {
+            num: 4,
+            label1: "Admitted on :",
+            value1: esc(f.admittedOn),
+            label2: "into class :",
+            value2: esc(f.intoClass),
+          },
+          {
+            num: 5,
+            label1: "Left on :",
+            value1: esc(f.leftOn),
+            label2: "from class :",
+            value2: esc(f.fromClass),
+            spacing: true,
+          },
+          { num: 6, label: "Subjects or portions studied :", value: esc(f.subject), colspan: true, spacing: true },
+          {
+            num: 7,
+            label: "Whether qualified for promotion to a<br>higher class :",
+            value: esc(f.courseStatus),
+            colspan: true,
+            pad: true,
+          },
+          { num: 8, label: "Whether all dues to the college have been<br>discharged :", value: "YES", colspan: true },
+          {
+            num: 9,
+            label: "Whether the student was in receipt of any<br>scholarship or concession :<br>(Nature to be specified)",
+            value: esc(f.category),
+            colspan: true,
+          },
+          { num: 10, label: getExaminationLabel(), value: getExaminationValue(), colspan: true },
+          {
+            num: 11,
+            label: "The date on which the student actually left<br>the college :",
+            value: esc(f.leftOn),
+            colspan: true,
+          },
+          { num: 12, label: "Date of application for Transfer Certificate :", value: esc(appDate), colspan: true },
+          {
+            num: 13,
+            label: "Date of issue of the Transfer Certificate :",
+            value: esc(issueDate),
+            colspan: true,
+            spacing: true,
+          },
+          { label: "Character and Conduct :", value: "", colspan: true, spacing: true, conduct: true },
+          { label: "Signature of the Principal :", value: "", colspan: true, spacing: true },
+          { label: "College Seal :", value: "", colspan: true, spacing: true },
+        ];
+
+        return rows
+          .filter((row) => !row.conduct || settings.showConduct !== false)
+          .map((row, i) => {
+            row.num = i + 1;
+            // spacing: taller single-line rows; pad: same gap but normal line height for wrapped labels
+            const lineSpacing = row.spacing
+              ? "line-height: 1.5; padding: 3px 4px;"
+              : row.pad
+                ? "padding: 3px 4px;"
+                : "";
+            if (row.colspan) {
+              return `<tr>
+                <td class="serial-col" style="${lineSpacing}">${row.num}.</td>
+                <td class="label-col" colspan="2" style="${lineSpacing}">${row.label}</td>
+                <td class="data-col" colspan="2" style="${lineSpacing}">${row.value}</td>
+              </tr>`;
+            }
+            return `<tr>
+                <td class="serial-col" style="${lineSpacing}">${row.num}.</td>
+                <td class="label-col" style="${lineSpacing}">${row.label1}</td>
+                <td class="data-col" style="${lineSpacing}">${row.value1}</td>
+                <td class="label-col" style="${lineSpacing}">${row.label2}</td>
+                <td class="data-col" style="${lineSpacing}">${row.value2}</td>
+              </tr>`;
+          })
+          .join("");
+      }
+
+      function getExaminationLabel() {
+        return `Name of the examination of the—<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;(a) University for which the student has<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;been last presented from the college<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and Reg. No. of the student :<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;(b) Date of examination :<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;(c) Whether the student has appeared for<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the examination, if so,—<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(i) The parts (or division) in which<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;he has passed :<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ii) The parts (or division) in which<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;he has failed :`;
+      }
+
+      function getExaminationValue() {
+        // Italic "I": slanted stem, top bar shifted right, bottom bar shifted left
+        return `<div class="exam-section">
+          <svg width="110" height="125" viewBox="0 0 110 125" xmlns="http://www.w3.org/2000/svg">
+            <g stroke="#000" stroke-width="1" stroke-linecap="square">
+              <line x1="32" y1="1" x2="108" y2="1" />
+              <line x1="2" y1="124" x2="78" y2="124" />
+              <line x1="70" y1="1" x2="40" y2="124" />
+            </g>
+          </svg>
+        </div>`;
+      }
+
+      async function downloadTCPDF() {
+        const btn = document.getElementById("btnTCPdf");
+        const alertEl = document.getElementById("batchAlert");
+        const original = btn.innerHTML;
+        btn.disabled = true;
+        try {
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+          const pages = document.querySelectorAll("#tcPages .tc-page");
+
+          for (let i = 0; i < pages.length; i++) {
+            btn.innerHTML = `<span class="spinner"></span> ${i + 1} / ${pages.length}`;
+            if (i > 0) pdf.addPage();
+            const canvas = await html2canvas(pages[i], {
+              scale: 2,
+              useCORS: true,
+              backgroundColor: "#ffffff",
+              width: pages[i].scrollWidth,
+              height: pages[i].scrollHeight,
+            });
+            const imgWidth = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, imgWidth, Math.min(imgHeight, 210));
+          }
+
+          const first = settings.nextTC.replace(/\//g, "-");
+          pdf.save(`Transfer_Certificates_${first}.pdf`);
+          showAlert(alertEl, "alert-success", `📥 PDF with ${pages.length} TC(s) downloaded. Click “Finalize Batch” once printed.`);
+        } catch (e) {
+          console.error(e);
+          showAlert(alertEl, "alert-error", "Error generating PDF: " + e.message);
+        }
+        btn.disabled = false;
+        btn.innerHTML = original;
+      }
+
+      function downloadTCSummaryExcel() {
+        if (!batch.length) return;
+        const rows = batch.map((b, i) => ({
+          "S.No": i + 1,
+          "Admission No": b.adm,
+          Name: b.student["Student Name"] || "",
+          Course: b.student["Course"] || "",
+          "TC Number": incrementTCNumber(settings.nextTC, i),
+          "Application Date": b.appDate,
+          "Date of Issue": b.issueDate,
+        }));
+        const ws = XLSX.utils.json_to_sheet(rows);
+        ws["!cols"] = [{ wch: 6 }, { wch: 14 }, { wch: 28 }, { wch: 22 }, { wch: 12 }, { wch: 16 }, { wch: 14 }];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "TC Summary");
+        XLSX.writeFile(wb, `TC_Summary_${settings.nextTC.replace(/\//g, "-")}.xlsx`);
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════════════════════ */
+      function fillSettingsForm() {
+        document.getElementById("setCollegeName").value = settings.collegeName;
+        document.getElementById("setNextTC").value = settings.nextTC;
+        document.getElementById("setIssueDate").value = settings.issueDate;
+        document.getElementById("setShowConduct").checked = settings.showConduct !== false;
+      }
+
+      function saveSettingsFromForm() {
+        const alertEl = document.getElementById("settingsAlert");
+        const college = document.getElementById("setCollegeName").value.trim();
+        const nextTC = document.getElementById("setNextTC").value.trim();
+        if (nextTC && !isValidTCNumber(nextTC)) {
+          showAlert(alertEl, "alert-error", "TC Number must look like 32/2025.");
+          return;
+        }
+        settings.collegeName = college;
+        settings.nextTC = nextTC;
+        settings.issueDate = document.getElementById("setIssueDate").value;
+        settings.showConduct = document.getElementById("setShowConduct").checked;
+        saveStore(STORE_SETTINGS, settings);
+        renderBatch();
+        showAlert(alertEl, "alert-success", "✅ Settings saved.");
+      }
+
+      function isValidTCNumber(tc) {
+        return /^\d+\/\S+$/.test(String(tc || "").trim());
+      }
+
+      function incrementTCNumber(tcNumber, index) {
+        if (!tcNumber) return "";
+        const parts = tcNumber.split("/");
+        if (parts.length === 2) return `${parseInt(parts[0]) + index}/${parts[1]}`;
+        return tcNumber;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   DATE HELPERS
+═══════════════════════════════════════════════════════════ */
+      const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const MONTHS_FULL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+      function fullYear(y) {
+        const yr = parseInt(y);
+        if (String(y).length === 4) return yr;
+        return yr <= 30 ? 2000 + yr : 1900 + yr;
+      }
+
+      // Returns { d, m, y } for "22-Aug-22", "22-Aug-2022", "31/03/2025", "4/9/2006", "2022-03-31"
+      function dateParts(str) {
+        if (!str) return null;
+        str = String(str).trim();
+        let m = str.match(/^(\d{1,2})[-\s]([A-Za-z]{3})[A-Za-z]*[-\s](\d{2}|\d{4})$/);
+        if (m) {
+          const mi = MONTHS.findIndex((x) => x.toLowerCase() === m[2].toLowerCase());
+          if (mi >= 0) return { d: parseInt(m[1]), m: mi + 1, y: fullYear(m[3]) };
+        }
+        m = str.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4}|\d{2})$/);
+        if (m) return { d: parseInt(m[1]), m: parseInt(m[2]), y: fullYear(m[3]) };
+        m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (m) return { d: parseInt(m[3]), m: parseInt(m[2]), y: parseInt(m[1]) };
+        return null;
+      }
+
+      // "22-Aug-2022" style (TC application forms)
+      function parseDate(str) {
+        const p = dateParts(str);
+        if (!p) return str ? String(str).trim() : "";
+        return `${p.d}-${MONTHS[p.m - 1]}-${p.y}`;
+      }
+
+      // "22/08/2022" style (Transfer Certificate)
+      function toDMY(str) {
+        const p = dateParts(str);
+        if (!p) return str ? String(str).trim() : "";
+        return `${String(p.d).padStart(2, "0")}/${String(p.m).padStart(2, "0")}/${p.y}`;
+      }
+
+      function dateToWords(str) {
+        const p = dateParts(str);
+        if (!p) return "";
+        const cap = (s) => s.split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+        return `${cap(numberToWords(p.d))} ${MONTHS_FULL[p.m - 1]} ${cap(numberToWords(p.y))}`;
+      }
+
+      function numberToWords(num) {
+        const ones = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+        const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+        const scales = ["", "thousand", "million", "billion"];
+        if (num === 0) return "zero";
+
+        function convertHundreds(n) {
+          let result = "";
+          if (n >= 100) {
+            result += ones[Math.floor(n / 100)] + " hundred ";
+            n %= 100;
+          }
+          if (n >= 20) {
+            result += tens[Math.floor(n / 10)] + " ";
+            n %= 10;
+          }
+          if (n > 0) result += ones[n] + " ";
+          return result.trim();
+        }
+
+        let result = "";
+        let scaleIndex = 0;
+        while (num > 0) {
+          if (num % 1000 !== 0) {
+            result = convertHundreds(num % 1000) + (scales[scaleIndex] ? " " + scales[scaleIndex] : "") + " " + result;
+          }
+          num = Math.floor(num / 1000);
+          scaleIndex++;
+        }
+        return result.trim();
+      }
+
+      function getYearOfStudy(student) {
+        const col1 = (student["I"] || "").trim();
+        const col2 = (student["II"] || "").trim();
+        const col3 = (student["III"] || "").trim();
+
+        const valid = (y) => y && y !== "1899-1900" && /^\d{4}-\d{4}$/.test(y);
+
+        const startYear = valid(col1) ? col1.split("-")[0] : "";
+        let endYear = "";
+
+        if (valid(col3)) endYear = col3.split("-")[1];
+        else if (valid(col2)) endYear = col2.split("-")[1];
+        else if (valid(col1)) endYear = col1.split("-")[1];
+
+        if (startYear && endYear && startYear !== endYear) return `${startYear}-${endYear}`;
+        if (valid(col1)) return col1;
+        return "";
+      }
+
+      function getTodayStr() {
+        const d = new Date();
+        return `${d.getDate()}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;
+      }
+
+      function todayISO() {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════════════════ */
+      function esc(v) {
+        return String(v == null ? "" : v)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function sanitizeName(name) {
+        return name
+          .replace(/[^a-zA-Z0-9_ ]/g, "")
+          .replace(/\s+/g, "_")
+          .slice(0, 40);
+      }
+
+      function showAlert(el, cls, msg) {
+        el.className = "alert " + cls + " visible";
+        el.textContent = msg;
+      }
+
+      function printWrappedRichText(doc, parts, x, origY, maxWidth, lineHt) {
+        let currentX = x;
+        let y = origY;
+        for (const part of parts) {
+          doc.setFont("helvetica", part.bold ? "bold" : "normal");
+          const textWithLines = part.text.replace(/\n/g, " [[NEWLINE]] ");
+          const tokens = textWithLines.split(/(\s+)/);
+          for (const token of tokens) {
+            if (!token) continue;
+            if (token === "[[NEWLINE]]") {
+              currentX = x;
+              y += lineHt;
+              continue;
+            }
+            const wWidth = doc.getTextWidth(token);
+            if (token.trim() !== "" && currentX + wWidth > x + maxWidth && currentX > x) {
+              currentX = x;
+              y += lineHt;
+            }
+            if (token.trim() === "" && currentX === x) continue;
+            doc.text(token, currentX, y);
+            currentX += wWidth;
+          }
+        }
+        return y;
+      }
+
+      renderBatch();
     </script>
   </body>
 </html>
-
-
-
